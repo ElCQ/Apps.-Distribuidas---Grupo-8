@@ -1,0 +1,28 @@
+{
+  "name": "movieplay",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon . src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ElCQ/Apps.-Distribuidas---Grupo-8.git"
+  },
+  "author": "Grupo8",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ElCQ/Apps.-Distribuidas---Grupo-8/issues"
+  },
+  "homepage": "https://github.com/ElCQ/Apps.-Distribuidas---Grupo-8#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.0",
+    "pino": "^9.1.0"
+  }
+}
