@@ -1,6 +1,7 @@
 import express from 'express';
 import checkUserLogged from '../middlewares/checkUserLogged.js';
 import movieController from '../controllers/movieController.js';
+import genreController from '../controllers/genreController.js';
 
 const routerAPI = express.Router();
 //movies
