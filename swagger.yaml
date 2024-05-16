@@ -36,7 +36,11 @@ components:
           type: string
         genre:
             $ref: '#/components/schemas/Genre'
-        content:
+        images:
+          type: array
+          items:
+            type: string
+        videos:
           type: array
           items:
             type: string
