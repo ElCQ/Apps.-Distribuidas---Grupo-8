@@ -1,4 +1,4 @@
-import movieService from '../movies/movieService.js';
+import movieService from '../services/movieService.js';
 import logger from '../utils/logger.js';
 
 let instance = null;
@@ -46,8 +46,8 @@ class MovieController{
     }
     postMovie = async (req, res, next) => {
         try{
-            let movieID = await movieService.createMovie(req.body.name, req.body.price, req.body.image, req.body.description, req.body.categories, 
-                                                               req.body.responsible, req.body.duration, req.body.frequency, req.body.comments, req.body.qualification, req.body.published, req.body.type);
+            //TODO add validation for attributes
+            let movieID = await movieService.createMovie(req.body);
             logger.info(`POST REQUEST successful for movie ${movieID}`);
             res.status(200).json({message: `The movie with ID ${movieID} was added to the catalog.`});
         }
