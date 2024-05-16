@@ -622,28 +622,17 @@ paths:
     post:
       tags:
         - Auths
-      summary: Logs in or registers the user
-      requestBody:
-        required: true
-        content:
-          application/jwt:
-            schema:
-                type: string
-                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
+      summary: Logs in or registers the user with Google Sign-In token
+      security:
+        - oauth2: [] 
       responses:
         '200':
-          description: Successfully returned the new JWT and refresh token
+          description: Successfully returned the new JWT
           content:
-            application/json:
+            application/jwt:
               schema:
-                type: object
-                properties:
-                  jwt:
-                    type: string
-                    example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
-                  refreshToken:
-                    type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxvcmVtSXBUSVRlciIsInJvbGUiOiJhZG1pbnistZXhwIjoxNjkyMDk2ODMwfQ.sKHKSHv-Q8lphIuVCnONzQxwIuO_zCKIiJ2BfA_FLhaA
+                type: string
+                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
         '500':
           description: Internal server error
           content:
@@ -660,22 +649,12 @@ paths:
     put:
       tags:
         - Auths
-      summary: Refresh Auth Token
+      summary: Refresh JWT Token
       security:
-        - bearerAuth: [] 
-      requestBody:
-        required: true
-        content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  refreshToken:
-                    type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxvcmVtSXBUSVRlciIsInJvbGUiOiJhZG1pbnistZXhwIjoxNjkyMDk2ODMwfQ.sKHKSHv-Q8lphIuVCnONzQxwIuO_zCKIiJ2BfA_FLhaA
+        - oauth2: [] 
       responses:
         '200':
-          description: Successfully returned the new token
+          description: Successfully returned the new token with Google Sign-In token
           content:
             application/jwt:
               schema:
