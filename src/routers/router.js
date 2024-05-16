@@ -2,6 +2,7 @@ import express from 'express';
 import checkUserLogged from '../middlewares/checkUserLogged.js';
 import movieController from '../controllers/movieController.js';
 import genreController from '../controllers/genreController.js';
+import userController from '../controllers/userController.js';
 
 const routerAPI = express.Router();
 //movies
@@ -21,8 +22,8 @@ routerAPI.post('/users/favorites/:id',checkUserLogged,userController.postMovieTo
 routerAPI.delete('/users/favorites/:id',checkUserLogged,userController.deleteMovieFromCurrentUserFavorites);
 //auths
 routerAPI.post('/auths', userController.postAuthUser);
-routerAPI.put('/auths', checkUserLogged, userController.putRefreshAuth);
-routerAPI.delete('/auths', checkUserLogged, userController.postLogOutUser);
+routerAPI.put('/auths', userController.putRefreshAuth);
+routerAPI.delete('/auths', userController.postLogOutUser);
 //comments
 routerAPI.post('/comments', commentController.postComment);
 
