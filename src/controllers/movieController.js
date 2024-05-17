@@ -36,9 +36,9 @@ class MovieController{
     }
     getMovieContentByID = async (req, res, next) => {
         try{
-            let item = await movieService.getMovieContent(req.params.id);
+            let movieContent = await movieService.getMovieContent(req.params.id);
             logger.info(`GET REQUEST successful for movie ${req.params.id}`);
-            res.status(200).json(item);
+            res.status(200).json(movieContent);
         }
         catch(error){
             next(error);
