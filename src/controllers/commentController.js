@@ -1,12 +1,13 @@
 import commentService from '../services/commentService.js';
 import logger from '../utils/logger.js';
+import commentDataValidation from '../validations/commentDataValidation.js';
 
 let instance = null;
 
 class CommentController{
     postComment = async (req, res, next) => {
         try{
-            //TODO add comment validation
+            commentDataValidation(req.body);
             let comment = await commentService.createComment(req.body);
             logger.info(`POST REQUEST successful for comment ${comment.id}`);
             res.status(200).json(comment);
