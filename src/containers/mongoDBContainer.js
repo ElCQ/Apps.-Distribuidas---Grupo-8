@@ -1,8 +1,10 @@
 import { mongoDatabase } from '../db/mongoClient.js';
 import { ObjectId } from 'mongodb';
 export default class MongoDBContainer {
-    constructor(dataType) {
+    constructor(dataType, expiracy = false) {
         this.items = mongoDatabase.collection(dataType);
+        if(expiracy)
+            this.items.createIndex({ expirationDate: 1 }, { expireAfterSeconds: 60*60 })
     }
     async save(object) {
         delete object.id;//removes the object ID
