@@ -1,10 +1,10 @@
 import { randomUUID } from 'crypto';
-import { ObjectId } from 'mongodb';
 class Movie{
     #title
     #subtitle
     #synopsis
     #genre
+    #default_poster
     #images
     #videos
     #release_date
@@ -15,11 +15,12 @@ class Movie{
     #cast
     #comments
     #id
-    constructor({title, subtitle, synopsis, genre, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments, id = randomUUID(),}){
+    constructor({title, subtitle, synopsis, genre, default_poster, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments, id = randomUUID(),}){
         this.#title = title
         this.#subtitle = subtitle
         this.#synopsis = synopsis
         this.#genre = genre
+        this.#default_poster = default_poster
         this.#images = images
         this.#videos = videos
         this.#release_date = release_date
@@ -54,6 +55,12 @@ class Movie{
     }
     setGenre(){
         this.#genre = genre
+    }
+    getDefaultPoster(){
+        return this.#default_poster
+    }
+    setDefaultPoster(){
+        this.#default_poster = default_poster
     }
     getImages(){
         return this.#images
@@ -112,11 +119,12 @@ class Movie{
     get(){
         return this.#id
     }
-    modify({title, subtitle, synopsis, genre, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments}){
+    modify({title, subtitle, synopsis, genre, default_poster, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments}){
         this.setTitle(title);
         this.setSubtitle(subtitle);
         this.setSynopsis(synopsis);
         this.setGenre(genre);
+        this.setDefaultPoster(default_poster)
         this.setImages(images);
         this.setVideos(videos);
         this.setReleaseDate(release_date);
@@ -133,6 +141,7 @@ class Movie{
             subtitle: this.#subtitle,
             synopsis: this.#synopsis,
             genre: this.#genre.toDTO(),
+            default_poster: this.#default_poster,
             images: this.#images,
             videos: this.#videos,
             release_date: this.#release_date,
