@@ -44,7 +44,7 @@ components:
           type: array
           items:
             type: string
-        release_year:
+        release_date:
           type: integer
         duration:
           type: number
@@ -52,8 +52,10 @@ components:
           type: number
         qualifiers:
           type: integer
-        director:
-          type: object
+        crew:
+          type: array
+          items:
+            type: object
         cast:
           type: array
           items:
