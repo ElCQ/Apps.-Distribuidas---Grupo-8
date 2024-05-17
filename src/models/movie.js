@@ -85,6 +85,10 @@ class Movie{
     setDuration(duration){
         this.#duration = duration
     }
+    addQualification(qualification){
+        this.#qualifiers = this.#qualifiers + 1
+        this.#qualification = (this.#qualification+qualification)/(this.#qualifiers)
+    }
     getQualification(){
         return this.#qualification
     }

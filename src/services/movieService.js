@@ -1,7 +1,6 @@
 import { Error } from "../error/error.js";
 import Movie from "../models/movie.js";
 import movieRepository from "../repositories/movieRepository.js";
-import { randomUUID } from 'crypto';
 
 let instance = null;
 
@@ -68,28 +67,17 @@ class MovieService{
         }
         return movieID;
     }
-    addQualification = async(idMovie, qualification) => {
+    addQualification = async(newComment) => {
+        let idMovie = newComment.getMovieID();
         if(!(await this.checkExistingMovie(idMovie))){
             throw new Error(`No movie was found matching ID ${idMovie}`, 'BAD_REQUEST');
         }
-        if(qualification == ""){
-            qualification = 0
-        }
-        else{
-            qualification = +qualification;
-        }
         let movie = await this.container.getItemByID(idMovie);
-        const newComment = {
-            user,
-            message,
-            qualification,
-            reviewed: false,
-            id: randomUUID()
-        }
         movie.addComment(newComment);
+        movie.addQualification(newComment.qualification)
         let movieID = await this.container.modifyByID(idMovie, movie.toDTO())
         if(!movieID){
-            throw new Error(`There was an error creating the movie`, 'INTERNAL_ERROR') 
+            throw new Error(`There was an error adding the comment to the movie`, 'INTERNAL_ERROR') 
         }
         return movieID;
     }
