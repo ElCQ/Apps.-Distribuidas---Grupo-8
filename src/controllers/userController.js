@@ -30,9 +30,9 @@ class UserController{
     }
     deleteLogOutUser = async (req, res) => {
         try{
-            let userEmail = await userService.logOutUser(req.header.authorization);
+            await userService.logOutUser(req.header.authorization);
             logger.info(`POST REQUEST successful for logging out user`);
-            res.status(200).json({statusCode: 200, message: `User ${userEmail} logged out successfully`});
+            res.status(200).json({statusCode: 200, message: `User logged out successfully`});
         }
         catch(error){
             next(error);
