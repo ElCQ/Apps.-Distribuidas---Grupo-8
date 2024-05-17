@@ -19,6 +19,6 @@ app.all('*', (req, res) => {
 //errorHandler
 app.use(errorHandler);
 //server configuration
-let port = 8080;
+let port = 5000;
 app.listen(port, () => logger.info(`Successfully connected to port ${port}`));
 app.on("error", err => logger.error(`${err}`));
