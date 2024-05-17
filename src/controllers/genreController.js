@@ -6,7 +6,7 @@ let instance = null;
 class GenreController{
     getAllGenres = async (req, res, next) => {
         try{
-            let items = await movieService.getAllItems();
+            let items = await genreService.getAllItems();
             logger.info(`GET REQUEST successful for all genres`);
             res.status(200).json(items);
         }
