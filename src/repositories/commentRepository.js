@@ -1,4 +1,3 @@
-import Comment from '../models/comment.js';
 import MongoDBContainer from "../containers/mongoDBContainer.js";
 
 let instance = null;

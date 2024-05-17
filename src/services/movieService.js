@@ -3,6 +3,7 @@ import Movie from "../models/movie.js";
 import { ObjectId } from 'mongodb';
 import movieRepository from "../repositories/movieRepository.js";
 import genreService from "./genreService.js";
+import movieDataValidation from "../validations/movieDataValidation.js";
 
 let instance = null;
 
@@ -58,6 +59,11 @@ class MovieService{
         return await (await this.getMovieByID(movieID)).getContent();
     }
     createMovie = async ({title, subtitle, synopsis, genre, default_poster, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments}) => {
+        movieDataValidation({title, subtitle, synopsis, default_poster, images, videos, release_date, duration, qualification, qualifiers, crew, cast});
+        let existingGenre = await genreService.checkExistingGenre(genre);
+        if(!existingGenre){
+            throw new Error(`No genre was found matching ID ${genre}`, 'BAD_REQUEST');
+        }
         let newMovie = new Movie({
             title: title,
             subtitle: subtitle,

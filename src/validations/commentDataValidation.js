@@ -11,12 +11,12 @@ export default function commentDataValidation({message, userId, movieId, date, q
         throw new Error(`The movie ID can not be empty.`, 'BAD_REQUEST')
     }
     if(date === ""){
-        throw new Error(`The movie date can not be empty.`, 'BAD_REQUEST')
+        throw new Error(`The comment date can not be empty.`, 'BAD_REQUEST')
     }
     if(isNaN(qualification)){
-        throw new Error(`The movie qualification must be a number.`, 'BAD_REQUEST')
+        throw new Error(`The comment qualification must be a number.`, 'BAD_REQUEST')
     }
     if(+qualification < 0){
-        throw new Error(`The movie qualification can not be negative.`, 'BAD_REQUEST')
+        throw new Error(`The comment qualification can not be negative.`, 'BAD_REQUEST')
     }
 }

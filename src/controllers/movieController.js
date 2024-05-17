@@ -46,7 +46,6 @@ class MovieController{
     }
     postMovie = async (req, res, next) => {
         try{
-            //TODO add validation for attributes
             let movieID = await movieService.createMovie(req.body);
             logger.info(`POST REQUEST successful for movie ${movieID}`);
             res.status(200).json({message: `The movie with ID ${movieID} was added to the catalog.`});
