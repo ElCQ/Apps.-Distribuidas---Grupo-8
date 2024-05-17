@@ -87,6 +87,10 @@ components:
           type: string
         id:
           type: string
+        favorites:
+          type: array
+          items: 
+            type: string
     Comment:
       type: object
       properties:
@@ -627,7 +631,14 @@ paths:
         - oauth2: [] 
       responses:
         '200':
-          description: Successfully returned the new JWT
+          description: Successfully returned the new JWT of the logged in user
+          content:
+            application/jwt:
+              schema:
+                type: string
+                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
+        '201':
+          description: Successfully returned the new JWT of the registered user
           content:
             application/jwt:
               schema:
