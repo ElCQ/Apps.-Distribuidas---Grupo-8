@@ -40,83 +40,86 @@ class Movie{
     getSubtitle(){
         return this.#subtitle
     }
-    setSubtitle(){
+    setSubtitle(subtitle){
         this.#subtitle = subtitle
     }
     getSynopsis(){
         return this.#synopsis
     }
-    setSynopsis(){
+    setSynopsis(synopsis){
         this.#synopsis = synopsis
     }
     getGenre(){
         return this.#genre
     }
-    setGenre(){
+    setGenre(genre){
         this.#genre = genre
     }
     getDefaultPoster(){
         return this.#default_poster
     }
-    setDefaultPoster(){
+    setDefaultPoster(default_poster){
         this.#default_poster = default_poster
     }
     getImages(){
         return this.#images
     }
-    setImages(){
+    setImages(images){
         this.#images = images
     }
     getVideos(){
         return this.#videos
     }
-    setVideos(){
+    setVideos(videos){
         this.#videos = videos
     }
     getReleaseDate(){
         return this.#release_date
     }
-    setReleaseDate(){
+    setReleaseDate(release_date){
         this.#release_date = release_date
     }
     getDuration(){
         return this.#duration
     }
-    setDuration(){
+    setDuration(duration){
         this.#duration = duration
     }
     getQualification(){
         return this.#qualification
     }
-    setQualification(){
+    setQualification(qualification){
         this.#qualification = qualification
     }
     getQualifiers(){
         return this.#qualifiers
     }
-    setQualifiers(){
+    setQualifiers(qualifiers){
         this.#qualifiers = qualifiers
     }
     getCrew(){
         return this.#crew
     }
-    setCrew(){
+    setCrew(crew){
         this.#crew = crew
     }
     getCast(){
         return this.#cast
     }
-    setCast(){
+    setCast(cast){
         this.#cast = cast
     }
     getComments(){
         return this.#comments
     }
-    setComments(){
+    setComments(comments){
         this.#comments = comments
     }
-    get(){
+    getID(){
         return this.#id
+    }
+    setID(id){
+        this.#id = id;
     }
     modify({title, subtitle, synopsis, genre, default_poster, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments}){
         this.setTitle(title);
@@ -134,14 +137,25 @@ class Movie{
         this.setCast(cast);
         this.setComments(comments);
     }
-    toDTO(){
+    async getContent(){
+        let content = {};
+        let images = [];
+        for (let index = 0; index < this.#images.length; index++) {
+            const image = this.#images[index];
+            let base64String = await image.toBase64()
+            images.push(base64String)
+        }
+        content["videos"] = this.#videos;
+        return content;
+    }
+    async toDTO(){
         const dto = {
             title: this.#title,
             subtitle: this.#subtitle,
             synopsis: this.#synopsis,
             genre: this.#genre.toDTO(),
-            default_poster: this.#default_poster.toDTO(),
-            images: this.#images.map(image => image.toDTO()),
+            default_poster: await this.#default_poster.toBase64(),
+            images: this.#images,
             videos: this.#videos,
             release_date: this.#release_date,
             duration: this.#duration,
