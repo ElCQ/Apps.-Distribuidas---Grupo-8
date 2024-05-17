@@ -1,12 +1,14 @@
 class Comment{
     #id
     #userId
+    #movieId
     #date
     #qualification
     #message
-    constructor({message, userId, date, qualification, id}){
+    constructor({message, userId, movieId, date, qualification, id}){
         this.#message = message;
         this.#userId = userId;
+        this.#movieId = movieId;
         this.#date = date;
         this.#qualification = qualification;
         this.#id = id;
@@ -22,6 +24,12 @@ class Comment{
     }
     setUserID(userId){
         this.#userId = userId;
+    }
+    getMovieID(){
+        return this.#movieId;
+    }
+    setMovieID(movieId){
+        this.#movieId = movieId;
     }
     getDate(){
         return this.#date;
@@ -45,6 +53,7 @@ class Comment{
         const dto = {
             message: this.#message,
             userId: this.#userId,
+            movieId: this.#movieId,
             date: this.#date,
             qualification: this.#qualification,
             id: this.#id

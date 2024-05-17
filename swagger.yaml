@@ -100,6 +100,8 @@ components:
       properties:
         userId:
           type: string
+        movieId:
+          type: string
         message:
           type: string
         date:
