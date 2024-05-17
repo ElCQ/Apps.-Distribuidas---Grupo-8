@@ -103,7 +103,6 @@ class UserService{
         return (userFound !== null && userFound.length !== 0)
     }
     updateUser = async (userID, user) => {
-        //TODO create userDataValidation(user);
         let {email, nickname, firstname, lastname, image, favorites} = user;
         let userData = await this.container.getItemByID(userID);
         let userFound = (userData !== null)

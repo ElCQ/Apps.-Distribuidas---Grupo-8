@@ -1,5 +1,6 @@
 import userService from '../services/userService.js';
 import logger from '../utils/logger.js';
+import userDataValidation from '../validations/userDataValidation.js';
 
 let instance = null;
 
@@ -52,6 +53,7 @@ class UserController{
     postUpdateUser = async (req, res, next) => {
         try{
             let userInformation = await userService.getUserInformation(req.header.authorization);
+            userDataValidation(req.body);
             let userInformationModified = await userService.updateUser(userInformation.id, req.body);
             logger.info(`POST REQUEST successful for updating the user ${userInformation.id}`);
             res.send(200).status(userInformationModified);
