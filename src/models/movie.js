@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto';
 class Movie{
     #title
     #subtitle
@@ -15,7 +14,7 @@ class Movie{
     #cast
     #comments
     #id
-    constructor({title, subtitle, synopsis, genre, default_poster, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments, id = randomUUID(),}){
+    constructor({title, subtitle, synopsis, genre, default_poster, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments, id}){
         this.#title = title
         this.#subtitle = subtitle
         this.#synopsis = synopsis
@@ -141,8 +140,8 @@ class Movie{
             subtitle: this.#subtitle,
             synopsis: this.#synopsis,
             genre: this.#genre.toDTO(),
-            default_poster: this.#default_poster,
-            images: this.#images,
+            default_poster: this.#default_poster.toDTO(),
+            images: this.#images.map(image => image.toDTO()),
             videos: this.#videos,
             release_date: this.#release_date,
             duration: this.#duration,
@@ -150,7 +149,7 @@ class Movie{
             qualifiers: this.#qualifiers,
             crew: this.#crew,
             cast: this.#cast,
-            comments: this.#comments,
+            comments: this.#comments.map(comment => comment.toDTO()),
             id: this.#id
         }
         return dto
