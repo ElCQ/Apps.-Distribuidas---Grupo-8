@@ -16,7 +16,7 @@ class UserService{
         let session = {
             userID: id,
             jwt: jwt,
-            exp: 60*60 //TODO check with config/env variable, 1h for now
+            expirationDate : new Date(Date.now() + 60 * 60 * 1000) //TODO check with config/env variable, 1h for now
         }
         return session;
     }
