@@ -1,6 +1,8 @@
 import { Error } from "../error/error.js";
 import Movie from "../models/movie.js";
+import { ObjectId } from 'mongodb';
 import movieRepository from "../repositories/movieRepository.js";
+import genreService from "./genreService.js";
 
 let instance = null;
 
@@ -12,44 +14,55 @@ class MovieService{
         let movieFound = await this.container.getItemByID(movieID);
         return (movieFound !== null && movieFound.length !== 0);
     }
+    getMovieByID = async(movieID) => {
+        let movie = await this.container.getItemByID(movieID)
+        let genre = await genreService.getGenre(movie.getGenre())
+        movie.setGenre(genre);
+        return movie;
+    }
     getAllItems = async () => {
         let items = await this.container.getAllItems();
         if(items < 1){
             throw new Error(`No movie was found`, 'BAD_REQUEST');
         }
         if(items.length === undefined){
+            let genre = await genreService.getGenre(items.getGenre())
+            items.setGenre(genre);
             return items.toDTO();
         }
         let itemsDTO = [];
-        items.forEach(movie => {
+        for (let index = 0; index < items.length; index++) {
+            let movie = items[index]
+            let genre = await genreService.getGenre(movie.getGenre())
+            movie.setGenre(genre);
             itemsDTO.push(movie.toDTO())
-        });
+        }
         return itemsDTO;
     }
     getMovie = async (movieID) => {
         if(!(await this.checkExistingMovie(movieID))){
             throw new Error(`No movie was found matching ID ${movieID}`, 'BAD_REQUEST');
         }
-        return await (await this.container.getItemByID(movieID)).toDTO();
+        return await (await this.getMovieByID(movieID)).toDTO();
     }
     getMovieComments = async (movieID) => {
         if(!(await this.checkExistingMovie(movieID))){
             throw new Error(`No movie was found matching ID ${movieID}`, 'BAD_REQUEST');
         }
-        return (await this.container.getItemByID(movieID)).Comments.map(comment => comment.toDTO());
+        return (await this.getMovieByID(movieID)).GetComments().map(comment => comment.toDTO());
     }
     getMovieContent = async (movieID) => {
         if(!(await this.checkExistingMovie(movieID))){
             throw new Error(`No movie was found matching ID ${movieID}`, 'BAD_REQUEST');
         }
-        return await (await this.container.getItemByID(movieID)).getContent();
+        return await (await this.getMovieByID(movieID)).getContent();
     }
     createMovie = async ({title, subtitle, synopsis, genre, default_poster, images, videos, release_date, duration, qualification, qualifiers, crew, cast, comments}) => {
         let newMovie = new Movie({
             title: title,
             subtitle: subtitle,
             synopsis: synopsis,
-            genre: genre,
+            genre: ObjectId(genre),
             default_poster: default_poster,
             images: images,
             videos: videos,
@@ -72,7 +85,7 @@ class MovieService{
         if(!(await this.checkExistingMovie(idMovie))){
             throw new Error(`No movie was found matching ID ${idMovie}`, 'BAD_REQUEST');
         }
-        let movie = await this.container.getItemByID(idMovie);
+        let movie = await getMovieByID(idMovie);
         movie.addComment(newComment);
         movie.addQualification(newComment.qualification)
         let movieID = await this.container.modifyByID(idMovie, movie.toDTO())
