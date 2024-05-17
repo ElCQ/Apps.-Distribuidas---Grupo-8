@@ -47,7 +47,7 @@ components:
         default_poster:
           type: string
         release_date:
-          type: integer
+          type: string
         duration:
           type: number
         qualification:
