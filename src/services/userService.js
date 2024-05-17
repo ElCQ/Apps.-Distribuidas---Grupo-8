@@ -33,7 +33,7 @@ class UserService{
     authUser = async (token) => {
         let information = googleSignInAuth(token); //TODO implement google sign in
         let authInfo = {}
-        let newUser = !checkExistingUser(information.email);
+        let newUser = !(await checkExistingUser(information.email));
         let user;
         if(newUser){
             user = new User({
@@ -61,7 +61,7 @@ class UserService{
     }
     refreshAuthUser = async (token) => {        
         let information = googleSignInAuth(token); //TODO implement google sign in
-        let userExists = await this.container.checkExistingUser(information.email)
+        let userExists = await checkExistingUser(information.email)
         if(!userExists){
             throw new Error(`The server could not validate the credentials`, 'FORBIDDEN')
         }
