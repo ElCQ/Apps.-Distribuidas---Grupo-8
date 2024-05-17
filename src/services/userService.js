@@ -1,5 +1,4 @@
 import { Error } from "../error/error.js";
-import config from "../config/config.js";
 import jwt from 'jsonwebtoken';
 import { ObjectId } from "bson";
 import User from "../models/user.js";
