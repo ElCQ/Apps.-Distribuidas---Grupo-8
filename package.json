@@ -20,6 +20,7 @@
   "homepage": "https://github.com/ElCQ/Apps.-Distribuidas---Grupo-8#readme",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "bson": "^6.7.0",
     "express": "^4.19.2",
     "image-to-base64": "^2.2.0",
     "jsonwebtoken": "^9.0.2",
