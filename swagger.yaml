@@ -44,6 +44,8 @@ components:
           type: array
           items:
             type: string
+        default_poster:
+          type: string
         release_date:
           type: integer
         duration:
