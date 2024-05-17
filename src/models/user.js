@@ -57,6 +57,14 @@ class User{
     setFavorites(favorites){
         this.#favorites = favorites;
     }
+    addFavorite(favorite){
+        if (!this.#favorites.includes(favorite)) {
+            this.#favorites.push(favorite);
+        }
+    }
+    removeFavorite(favorite){
+        this.#favorites = this.#favorites.filter(item => item !== favorite);
+    }
     modify({email, nickname, firstname, lastname, image, favorites}){
         this.setEmail(email);
         this.setNickname(nickname);
