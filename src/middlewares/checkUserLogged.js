@@ -1,13 +1,15 @@
 import { Error } from "../error/error.js";
 import userService from "../services/userService.js";
 
-export default function checkUserLogged(req, res, next) {
-    if(!req.header.authorization){
-        throw new Error('You need to be logged in to perform this action', 'FORBIDDEN')
+export default async function checkUserLogged(req, res, next) {
+    if(!req.headers.authorization){
+        next(new Error('You need to be logged in to perform this action', 'FORBIDDEN'))
+        return;
     }
-    let session = userService.validateJWT(req.header.authorization);
+    let session = await userService.validateJWT(req.headers.authorization);
     if(!session){
-        throw new Error('You need to be logged in to perform this action', 'FORBIDDEN')
+        next(new Error('You need to be logged in to perform this action', 'FORBIDDEN'))
+        return;
     }
     next();
 }

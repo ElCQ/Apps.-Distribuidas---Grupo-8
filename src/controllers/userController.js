@@ -7,13 +7,15 @@ let instance = null;
 class UserController{
     postAuthUser = async (req, res, next) => {
         try{
-            let userLogged = await userService.authUser(req.header.authorization);
+            let userLogged = await userService.authUser(req.headers.authorization);
             if (userLogged.new){
                 logger.info(`POST REQUEST successful for registering user with email ${userLogged.email}`);
                 res.status(201).json(userLogged.jwt);
             }
-            logger.info(`POST REQUEST successful for logging in user with email ${userLogged.email}`);
-            res.status(200).json(userLogged.jwt);
+            else{
+                logger.info(`POST REQUEST successful for logging in user with email ${userLogged.email}`);
+                res.status(200).json(userLogged.jwt);
+            }
         }
         catch(error){
             next(error);
@@ -21,7 +23,7 @@ class UserController{
     }
     putRefreshAuth = async (req, res, next) => {
         try{
-            let userLogged = await userService.refreshAuthUser(req.header.authorization);
+            let userLogged = await userService.refreshAuthUser(req.headers.authorization);
             logger.info(`PUT REQUEST successful for refreshing token for user with email ${userLogged.email}`);
             res.status(200).json(userLogged.jwt);
         }
@@ -29,20 +31,19 @@ class UserController{
             next(error);
         }
     }
-    deleteLogOutUser = async (req, res) => {
+    deleteLogOutUser = async (req, res, next) => {
         try{
-            await userService.logOutUser(req.header.authorization);
+            await userService.logOutUser(req.headers.authorization);
             logger.info(`POST REQUEST successful for logging out user`);
             res.status(200).json({statusCode: 200, message: `User logged out successfully`});
         }
         catch(error){
             next(error);
         }
-        res.sendStatus(200);
     }
     getCurrentUser = async (req, res, next) => {
         try{
-            let userInformation = await userService.getUserInformation(req.header.authorization);
+            let userInformation = await userService.getUserInformation(req.headers.authorization);
             logger.info(`GET REQUEST successful for getting the information of user ${userInformation.email}`);
             res.status(200).json(userInformation);
         }
@@ -52,7 +53,7 @@ class UserController{
     }
     postUpdateUser = async (req, res, next) => {
         try{
-            let userInformation = await userService.getUserInformation(req.header.authorization);
+            let userInformation = await userService.getUserInformation(req.headers.authorization);
             userDataValidation(req.body);
             let userInformationModified = await userService.updateUser(userInformation.id, req.body);
             logger.info(`POST REQUEST successful for updating the user ${userInformation.id}`);
@@ -64,7 +65,7 @@ class UserController{
     }
     deleteUser = async (req, res, next) => {
         try{
-            let userInformation = await userService.getUserInformation(req.header.authorization);
+            let userInformation = await userService.getUserInformation(req.headers.authorization);
             await userService.deleteUser(userInformation.id);
             logger.info(`DELETE REQUEST successful for deleting the user ${userInformation.id}`);
             res.sendStatus(200);
@@ -75,7 +76,7 @@ class UserController{
     }
     getCurrentUserFavorites = async (req, res, next) => {
         try{
-            let userInformation = await userService.getUserInformation(req.header.authorization);
+            let userInformation = await userService.getUserInformation(req.headers.authorization);
             let favoriteMovies = await userService.getUserFavoriteMovies(userInformation.id);
             logger.info(`GET REQUEST successful for user ${userInformation.id} favorite movies`);
             res.status(200).json(favoriteMovies);
@@ -86,7 +87,7 @@ class UserController{
     }
     postMovieToCurrentUserFavorites = async (req, res, next) => {
         try{
-            let userInformation = await userService.getUserInformation(req.header.authorization);
+            let userInformation = await userService.getUserInformation(req.headers.authorization);
             let favoriteMovies = await userService.addMovieToUserFavorites(userInformation.id, req.params.id);
             logger.info(`GET REQUEST successful for user ${userInformation.id} favorite movies`);
             res.status(200).json(favoriteMovies);
@@ -97,7 +98,7 @@ class UserController{
     }
     deleteMovieFromCurrentUserFavorites = async (req, res, next) => {
         try{
-            let userInformation = await userService.getUserInformation(req.header.authorization);
+            let userInformation = await userService.getUserInformation(req.headers.authorization);
             let favoriteMovies = await userService.removeMovieFromUserFavorites(userInformation.id, req.params.id);
             logger.info(`GET REQUEST successful for user ${userInformation.id} favorite movies`);
             res.status(200).json(favoriteMovies);

@@ -17,14 +17,14 @@ routerAPI.get('/genres', genreController.getAllGenres)
 //auths
 routerAPI.post('/auths', userController.postAuthUser);
 routerAPI.put('/auths', userController.putRefreshAuth);
-routerAPI.delete('/auths', userController.deleteLogOutUser);
+routerAPI.delete('/auths', checkUserLogged, userController.deleteLogOutUser);
 //users
-routerAPI.get('/users', checkUserLogged,userController.getCurrentUser);
+routerAPI.get('/users', checkUserLogged, userController.getCurrentUser);
 routerAPI.post('/users', checkUserLogged, userController.postUpdateUser);
 routerAPI.delete('/users', checkUserLogged, userController.deleteUser);
-routerAPI.get('/users/favorites', checkUserLogged,userController.getCurrentUserFavorites);
-routerAPI.post('/users/favorites/:id', checkUserLogged,userController.postMovieToCurrentUserFavorites);
-routerAPI.delete('/users/favorites/:id', checkUserLogged,userController.deleteMovieFromCurrentUserFavorites);
+routerAPI.get('/users/favorites', checkUserLogged, userController.getCurrentUserFavorites);
+routerAPI.post('/users/favorites/:id', checkUserLogged, userController.postMovieToCurrentUserFavorites);
+routerAPI.delete('/users/favorites/:id', checkUserLogged, userController.deleteMovieFromCurrentUserFavorites);
 //comments
 routerAPI.post('/comments', checkUserLogged, commentController.postComment);
 
