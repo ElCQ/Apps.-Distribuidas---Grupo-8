@@ -25,7 +25,7 @@ class GenreService{
         if(!(await this.checkExistingGenre(genreID))){
             throw new Error(`No genre was found matching ID ${genreID}`, 'BAD_REQUEST');
         }
-        return (await this.container.getItemByID(genreID)).toDTO();
+        return (await this.container.getItemByID(genreID));
     }
     checkExistingGenre = async (genreID) => {
         let genreFound = await this.container.getItemByID(genreID);

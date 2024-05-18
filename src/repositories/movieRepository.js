@@ -1,4 +1,5 @@
 import Movie from '../models/movie.js';
+import Image from '../models/image.js'
 import { ObjectId } from 'mongodb';
 import MongoDBContainer from "../containers/mongoDBContainer.js";
 
@@ -12,6 +13,8 @@ class MovieRepository {
     parseItems(moviesDTOs){
         let parsedMovies = [];
         moviesDTOs.forEach((movie)=>{
+            movie.images.map(image => new Image(image))
+            movie.default_poster = new Image(movie.default_poster)
             parsedMovies.push(new Movie(movie));
         })
         return parsedMovies;
@@ -22,6 +25,8 @@ class MovieRepository {
     async getItemByID(id) {
         const dto = await this.#dao.getItemByID(id)
         if (!dto) return null
+        dto.images.map(image => new Image(image))
+        dto.default_poster = new Image(dto.default_poster)
         return new Movie(dto)
     }
     async getAllItems(){

@@ -18,13 +18,6 @@ class GenreController{
         let genreFound = await this.container.getItemByID(genreID);
         return (genreFound !== null && genreFound.length !== 0);
     }
-    getGenre = async (genreID) => {
-        let genreFound = await this.container.getItemByID(genreID);
-        if(!(genreFound !== null && genreFound.length !== 0)){
-            throw new Error(`No genre was found matching ID ${genreID}`, 'BAD_REQUEST');
-        }
-        return genreFound
-    }
     static getInstance(){
         if(!instance){
             instance = new GenreController();
