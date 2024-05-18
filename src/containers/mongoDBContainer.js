@@ -4,14 +4,14 @@ export default class MongoDBContainer {
     constructor(dataType, expiracy = false) {
         this.items = mongoDatabase.collection(dataType);
         if(expiracy)
-            this.items.createIndex({ expirationDate: 1 }, { expireAfterSeconds: 60*60 })
+            this.items.createIndex({ expirationDate: 1 }, { expireAfterSeconds: 0 })
     }
     async save(object) {
         delete object.id;//removes the object ID
         return (await this.items.insertOne(object)).insertedId.toString()
     }
     async getItemByID(idItem) {
-        let criterio = { _id: ObjectId(idItem) };
+        let criterio = { _id: new ObjectId(idItem) };
         let item = await this.items.find(criterio).toArray();
         if(!item.toString()){//to check if no doc was found
             return null;
@@ -39,16 +39,16 @@ export default class MongoDBContainer {
     }
     async getItemByReferenceID(field, id){
         let criteria = {};
-        criteria[field] = ObjectId(id);
+        criteria[field] = new ObjectId(id);
         return this.getItemByCriteria(criteria);
     }
     async modifyByID(idItem, newItemParam){
         delete newItemParam.id;
-        let query = await this.items.updateOne({ _id: ObjectId(idItem) }, { $set: newItemParam });
+        let query = await this.items.updateOne({ _id: new ObjectId(idItem) }, { $set: newItemParam });
         return (query.modifiedCount > 0);
     }
     async deleteByID(idItem){
-        let criterio = { _id: ObjectId(idItem) };
+        let criterio = { _id: new ObjectId(idItem) };
         let query = await this.items.deleteOne(criterio);
         return (query.deletedCount > 0);
     }
