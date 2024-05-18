@@ -4,6 +4,7 @@ import { ObjectId } from "bson";
 import User from "../models/user.js";
 import userRepository from "../repositories/userRepository.js";
 import sessionRepository from "../repositories/sessionRepository.js";
+import { google } from "googleapis";
 
 let instance = null;
 
@@ -12,9 +13,17 @@ class UserService{
         this.container = userRepository;
         this.sessionContainer = sessionRepository;
     }
+    googleSignInAuth = async (token) => {
+        const oauth2 = google.oauth2({
+            version: 'v2',
+            auth: token,
+          });
+        const userInfo = await oauth2.userinfo.get();
+        return userInfo.data; // Contains user information if valid
+    }
     createSession = (id, jwt) => {
         let session = {
-            userID: id,
+            userID: new ObjectId(id),
             jwt: jwt,
             expirationDate : new Date(Date.now() + 60 * 60 * 1000) //TODO check with config/env variable, 1h for now
         }
@@ -28,12 +37,12 @@ class UserService{
             iat: Math.floor(Date.now() / 1000), // timestamp
             exp: Math.floor(Date.now() / 1000) + (60 * 60), //TODO check with config/env variable, 1h for now
         };
-        return jwt.sign(payload, secretKey)
+        return "Bearer " + jwt.sign(payload, secretKey)
     }
     authUser = async (token) => {
-        let information = googleSignInAuth(token); //TODO implement google sign in
+        let information = await this.googleSignInAuth(token);
         let authInfo = {}
-        let newUser = !(await checkExistingUser(information.email));
+        let newUser = !(await this.checkExistingUser(information.email));
         let user;
         if(newUser){
             user = new User({
@@ -45,14 +54,14 @@ class UserService{
                 favorites: [],
                 id: new ObjectId()
             })
-            let userID = this.container.save(user)
+            let userID = await this.container.save(user)
             user.setID(userID);
         }
         else{
-            user = getUser(information.email)
+            user = await this.getUser(information.email)
         }
-        let jwt = createJWT(user)
-        let session = createSession(user.getID(), jwt);
+        let jwt = this.createJWT(user)
+        let session = this.createSession(user.getID(), jwt);
         await this.sessionContainer.save(session);
         authInfo.email = user.getEmail()
         authInfo.new = newUser;
@@ -60,25 +69,25 @@ class UserService{
         return authInfo;
     }
     refreshAuthUser = async (token) => {        
-        let information = googleSignInAuth(token); //TODO implement google sign in
-        let userExists = await checkExistingUser(information.email)
+        let information = await this.googleSignInAuth(token);
+        let userExists = await this.checkExistingUser(information.email)
         if(!userExists){
             throw new Error(`The server could not validate the credentials`, 'FORBIDDEN')
         }
-        let user = await getUser(information.email);
+        let user = await this.getUser(information.email);
         let newJWT = this.createJWT(user);
         let session = this.createSession(user.getID(), newJWT);
         await this.sessionContainer.save(session);
         let authInfo = {}
         authInfo.email = user.getEmail()
-        authInfo.jwt = jwt;
+        authInfo.jwt = newJWT;
         return authInfo;
     }
     validateJWT = async(token) => {
         return await this.sessionContainer.getItemByCriteria({jwt: token});
     }
     logOutUser = async(token) => {
-        let id = validateJWT(token)
+        let id = await this.validateJWT(token)
         if(!id){
             return;
         }
@@ -88,7 +97,7 @@ class UserService{
         }
     }
     getUserInformation = async (token) => {
-        let session = validateJWT(token); //TODO implement google sign in
+        let session = await this.validateJWT(token);
         let user = await this.container.getItemByID(session.userID)
         if(!user){
             throw new Error(`No user was found with the google token ${token}`, 'NOT_FOUND');
@@ -99,7 +108,7 @@ class UserService{
         return await this.container.getItemByCriteria({email: email})
     }
     checkExistingUser = async (email) => {
-        let userFound = await getUser(email);
+        let userFound = await this.getUser(email);
         return (userFound !== null && userFound.length !== 0)
     }
     updateUser = async (userID, user) => {
@@ -150,7 +159,7 @@ class UserService{
         }
         userData.addFavorite(movieID);
         await this.container.modifyByID(userID, userData);
-        return await getUserFavoriteMovies(userID);
+        return await this.getUserFavoriteMovies(userID);
     }
     removeMovieFromUserFavorites = async (userID) => {
         let userData = await this.container.getItemByID(userID, movieID);
@@ -160,7 +169,7 @@ class UserService{
         }
         userData.removeFavorite(movieID);
         await this.container.modifyByID(userID, userData);
-        return await getUserFavoriteMovies(userID);
+        return await this.getUserFavoriteMovies(userID);
     }
     static getInstance(){
         if(!instance){
