@@ -159,7 +159,7 @@ class Movie{
             synopsis: this.#synopsis,
             genre: this.#genre.toDTO(),
             default_poster: await this.#default_poster.toBase64(),
-            images: this.#images,
+            images: this.#images.map(image => image.toDTO()),
             videos: this.#videos,
             release_date: this.#release_date,
             duration: this.#duration,

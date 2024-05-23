@@ -13,7 +13,7 @@ class MovieRepository {
     parseItems(moviesDTOs){
         let parsedMovies = [];
         moviesDTOs.forEach((movie)=>{
-            movie.images.map(image => new Image(image))
+            movie.images = movie.images.map(image => {return new Image(image)})
             movie.default_poster = new Image(movie.default_poster)
             parsedMovies.push(new Movie(movie));
         })
@@ -29,11 +29,14 @@ class MovieRepository {
         dto.default_poster = new Image(dto.default_poster)
         return new Movie(dto)
     }
-    async getAllItems(){
-        let moviesDTOs = await this.#dao.getAllItems();
+    async getItemsByQuantityAndPageAndSortCriteria(quantity, page, sortCriteria){
+        let moviesDTOs = await this.#dao.getItemsByQuantityAndPageAndSortCriteria(quantity, page, sortCriteria);
         if (!moviesDTOs) return null
         if (moviesDTOs.length === 1 || moviesDTOs.length === undefined) {
-            return new Movie(moviesDTOs[0])
+            let movie = moviesDTOs[0]
+            movie.images = movie.images.map(image => {return new Image(image)})
+            movie.default_poster = new Image(movie.default_poster)
+            return new Movie(movie);
         }
         else{
             return this.parseItems(moviesDTOs);
@@ -44,7 +47,10 @@ class MovieRepository {
         if (!dtos) return null
         if (dtos.length === undefined) return new Movie(dtos);
         if (dtos.length === 1) {
-            return new Movie(dtos[0]);
+            let movie = dtos[0]
+            movie.images = movie.images.map(image => {return new Image(image)})
+            movie.default_poster = new Image(movie.default_poster)
+            return new Movie(movie);
         }
         else{
             return this.parseItems(dtos);
@@ -55,7 +61,10 @@ class MovieRepository {
         if (!dtos) return null
         if (dtos.length === undefined) return new Movie(dtos);
         if (dtos.length === 1) {
-            return new Movie(dtos[0]);
+            let movie = dtos[0]
+            movie.images = movie.images.map(image => {return new Image(image)})
+            movie.default_poster = new Image(movie.default_poster)
+            return new Movie(movie);
         }
         else{
             return this.parseItems(dtos);

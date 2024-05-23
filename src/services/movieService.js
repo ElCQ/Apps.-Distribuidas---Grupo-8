@@ -20,22 +20,26 @@ class MovieService{
         movie.setGenre(genre);
         return movie;
     }
-    getAllItems = async () => {
-        let items = await this.container.getAllItems();
+    getMoviesByQuantityAndPageAndSortCriteria = async (quantity, page, sortCriteria) => {
+        console.log(quantity)
+        console.log(page)
+        console.log(sortCriteria)
+        let items = await this.container.getItemsByQuantityAndPageAndSortCriteria(quantity, page, sortCriteria);
+        console.log(items)
         if(items < 1){
             throw new Error(`No movie was found`, 'BAD_REQUEST');
         }
         if(items.length === undefined){
             let genre = await genreService.getGenre(items.getGenre())
             items.setGenre(genre);
-            return items.toDTO();
+            return await items.toDTO();
         }
         let itemsDTO = [];
         for (let index = 0; index < items.length; index++) {
             let movie = items[index]
             let genre = await genreService.getGenre(movie.getGenre())
             movie.setGenre(genre);
-            itemsDTO.push(movie.toDTO())
+            itemsDTO.push(await movie.toDTO())
         }
         return itemsDTO;
     }

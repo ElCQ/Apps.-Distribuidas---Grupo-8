@@ -7,7 +7,7 @@ import commentController from '../controllers/commentController.js';
 
 const routerAPI = express.Router();
 //movies
-routerAPI.get('/movies', movieController.getAllMovies);
+routerAPI.get('/movies', movieController.getMovies);
 routerAPI.post('/movies', checkUserLogged, movieController.postMovie);
 routerAPI.get('/movies/:id', movieController.getMovieByID);
 routerAPI.get('/movies/:id/comments', movieController.getMovieCommentsByID);

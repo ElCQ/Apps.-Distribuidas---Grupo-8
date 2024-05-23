@@ -5,9 +5,19 @@ import movieDataValidation from "../validations/movieDataValidation.js";
 let instance = null;
 
 class MovieController{
-    getAllMovies = async (req, res, next) => {
+    getMovies = async (req, res, next) => {
         try{
-            let items = await movieService.getAllItems();
+            let quantity = (req.query.quantity === null || req.query.quantity === undefined || isNaN(parseInt(req.query.quantity))) ? 20 : +req.query.quantity;
+            let page = (req.query.page === null || req.query.page === undefined || isNaN(req.query.page)) ? 1 : +req.query.page;
+            let sort = {}
+            if(req.query.qualification_sort !== null && req.query.qualification_sort !== undefined && (req.query.qualification_sort === "qualification.asc" || req.query.qualification_sort === "qualification.desc")){
+                sort.qualification = (req.query.qualification_sort === "qualification.asc") ? 1 : -1
+            }
+            if(req.query.release_sort !== null && req.query.release_sort !== undefined && (req.query.release_sort === "release.asc" || req.query.release_sort === "release.desc")){
+                sort.release_date = (req.query.release_sort === "release.asc") ? 1 : -1
+            }
+            console.log(sort)
+            let items = await movieService.getMoviesByQuantityAndPageAndSortCriteria(quantity, page, sort);
             logger.info(`GET REQUEST successful for all movies`);
             res.status(200).json(items);
         }

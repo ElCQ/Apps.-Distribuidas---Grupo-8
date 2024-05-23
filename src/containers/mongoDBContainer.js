@@ -29,6 +29,17 @@ export default class MongoDBContainer {
         });
         return itemList
     }
+    async getItemsByQuantityAndPageAndSortCriteria(quantity, page, sortCriteria){
+        let items = await this.items.find({}).sort(sortCriteria).skip((page - 1) * quantity).limit(quantity).toArray();
+        if(!items.toString()){//to check if no doc was found
+            return null;
+        }
+        let itemList = []
+        items.forEach(item => {
+            itemList.push(this.parseData(item))
+        });
+        return itemList
+    }
     async getItemByCriteria(criteria) {
         let item = await this.items.find(criteria).toArray();
         if(item instanceof Array && item.length !== 0) return (this.parseMultipleData(item))
