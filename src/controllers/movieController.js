@@ -7,6 +7,7 @@ let instance = null;
 class MovieController{
     getMovies = async (req, res, next) => {
         try{
+            let query = (req.query.query === null || req.query.query === undefined) ? "" : req.query.query;
             let quantity = (req.query.quantity === null || req.query.quantity === undefined || isNaN(parseInt(req.query.quantity))) ? 20 : +req.query.quantity;
             let page = (req.query.page === null || req.query.page === undefined || isNaN(req.query.page)) ? 1 : +req.query.page;
             let sort = {}
@@ -16,8 +17,7 @@ class MovieController{
             if(req.query.release_sort !== null && req.query.release_sort !== undefined && (req.query.release_sort === "release.asc" || req.query.release_sort === "release.desc")){
                 sort.release_date = (req.query.release_sort === "release.asc") ? 1 : -1
             }
-            console.log(sort)
-            let items = await movieService.getMoviesByQuantityAndPageAndSortCriteria(quantity, page, sort);
+            let items = await movieService.getMovies(query, quantity, page, sort);
             logger.info(`GET REQUEST successful for all movies`);
             res.status(200).json(items);
         }

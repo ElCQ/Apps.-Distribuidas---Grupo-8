@@ -20,12 +20,8 @@ class MovieService{
         movie.setGenre(genre);
         return movie;
     }
-    getMoviesByQuantityAndPageAndSortCriteria = async (quantity, page, sortCriteria) => {
-        console.log(quantity)
-        console.log(page)
-        console.log(sortCriteria)
-        let items = await this.container.getItemsByQuantityAndPageAndSortCriteria(quantity, page, sortCriteria);
-        console.log(items)
+    getMovies = async (query, quantity, page, sortCriteria) => {
+        let items = await this.container.getMovies(query, quantity, page, sortCriteria);
         if(items < 1){
             throw new Error(`No movie was found`, 'BAD_REQUEST');
         }

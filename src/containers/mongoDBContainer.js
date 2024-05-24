@@ -29,8 +29,17 @@ export default class MongoDBContainer {
         });
         return itemList
     }
-    async getItemsByQuantityAndPageAndSortCriteria(quantity, page, sortCriteria){
-        let items = await this.items.find({}).sort(sortCriteria).skip((page - 1) * quantity).limit(quantity).toArray();
+    async getItems(query, quantity, page, sortCriteria){
+        let listOfCriterias = [];
+        listOfCriterias = listOfCriterias.concat(query.fields.map(attribute => { return {[attribute]: { $regex: new RegExp(query.value, 'i') }}}))
+        listOfCriterias = listOfCriterias.concat(query.itemFields.map(itemField => {return {[itemField.listName]: { $elemMatch: { [itemField.field]: { $regex: new RegExp(query.value, 'i') } }}}}))
+        // [
+        //     { [query.fields[0]]: { $regex: new RegExp(query.value, 'i') } },
+        //     { [query.fields[1]]: { $regex: new RegExp(query.value, 'i') } }
+        //   ]
+        console.log(listOfCriterias)
+        let filter = (query.value !== "") ? {$or: listOfCriterias} : {} //in case it is blank apply no filter
+        let items = await this.items.find(filter).sort(sortCriteria).skip((page - 1) * quantity).limit(quantity).toArray();
         if(!items.toString()){//to check if no doc was found
             return null;
         }
