@@ -53,7 +53,7 @@ class Image{
         return dto
     }
     async toBase64(){
-        const imageUrl = 'https://image.tmdb.org/t/p/original/'+this.#file_path
+        const imageUrl = 'https://image.tmdb.org/t/p/original'+this.#file_path
         return await imageToBase64(imageUrl)
     }
 }

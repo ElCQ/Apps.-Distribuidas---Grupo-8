@@ -30,15 +30,29 @@ export default class MongoDBContainer {
         return itemList
     }
     async getItems(query, quantity, page, sortCriteria){
-        let listOfCriterias = [];
-        listOfCriterias = listOfCriterias.concat(query.fields.map(attribute => { return {[attribute]: { $regex: new RegExp(query.value, 'i') }}}))
-        listOfCriterias = listOfCriterias.concat(query.itemFields.map(itemField => {return {[itemField.listName]: { $elemMatch: { [itemField.field]: { $regex: new RegExp(query.value, 'i') } }}}}))
-        // [
-        //     { [query.fields[0]]: { $regex: new RegExp(query.value, 'i') } },
-        //     { [query.fields[1]]: { $regex: new RegExp(query.value, 'i') } }
-        //   ]
-        console.log(listOfCriterias)
-        let filter = (query.value !== "") ? {$or: listOfCriterias} : {} //in case it is blank apply no filter
+        let listOfGenreCriterias = [];
+        let listOfQueryCriterias = [];
+        if(query.referenceFields.length !== 0){
+            listOfGenreCriterias = listOfGenreCriterias.concat(query.referenceFields.map(referenceField => { return {[referenceField.field]: new ObjectId(referenceField.value)}}))
+        }
+        if(query.value !== ""){ //in case it is blank apply no filter
+            listOfQueryCriterias = listOfQueryCriterias.concat(query.fields.map(attribute => { return {[attribute]: { $regex: new RegExp(query.value, 'i') }}}))
+            listOfQueryCriterias = listOfQueryCriterias.concat(query.itemFields.map(itemField => {return {[itemField.listName]: { $elemMatch: { [itemField.field]: { $regex: new RegExp(query.value, 'i') } }}}}))
+        }
+        let genreCriteria = {$or: listOfGenreCriterias};
+        let queryCriteria = {$or: listOfQueryCriterias};
+        let filter;
+        if(listOfGenreCriterias.length === 0){
+            filter = queryCriteria
+        }
+        else{
+            if(listOfQueryCriterias.length === 0){
+                filter = genreCriteria
+            }
+            else{
+                filter = {$and: [genreCriteria, queryCriteria]}
+            }
+        }
         let items = await this.items.find(filter).sort(sortCriteria).skip((page - 1) * quantity).limit(quantity).toArray();
         if(!items.toString()){//to check if no doc was found
             return null;

@@ -20,8 +20,8 @@ class MovieService{
         movie.setGenre(genre);
         return movie;
     }
-    getMovies = async (query, quantity, page, sortCriteria) => {
-        let items = await this.container.getMovies(query, quantity, page, sortCriteria);
+    getMovies = async (genre, query, quantity, page, sortCriteria) => {
+        let items = await this.container.getMovies(genre, query, quantity, page, sortCriteria);
         if(items < 1){
             throw new Error(`No movie was found`, 'BAD_REQUEST');
         }
