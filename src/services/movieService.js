@@ -49,7 +49,7 @@ class MovieService{
         if(!(await this.checkExistingMovie(movieID))){
             throw new Error(`No movie was found matching ID ${movieID}`, 'BAD_REQUEST');
         }
-        return (await this.getMovieByID(movieID)).GetComments().map(comment => comment.toDTO());
+        return (await this.getMovieByID(movieID)).getComments().map(comment => comment.toDTO());
     }
     getMovieContent = async (movieID) => {
         if(!(await this.checkExistingMovie(movieID))){

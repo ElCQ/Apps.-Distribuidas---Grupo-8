@@ -25,7 +25,7 @@ class MovieRepository {
     async getItemByID(id) {
         const dto = await this.#dao.getItemByID(id)
         if (!dto) return null
-        dto.images.map(image => new Image(image))
+        dto.images = dto.images.map(image => {return new Image(image)})
         dto.default_poster = new Image(dto.default_poster)
         return new Movie(dto)
     }
