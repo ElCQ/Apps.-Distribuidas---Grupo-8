@@ -149,6 +149,7 @@ class Movie{
             let base64String = await image.toBase64()
             images.push(base64String)
         }
+        content["images"] = images;
         content["videos"] = this.#videos;
         return content;
     }
