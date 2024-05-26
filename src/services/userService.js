@@ -6,6 +6,7 @@ import config from '../config/config.js';
 import User from "../models/user.js";
 import userRepository from "../repositories/userRepository.js";
 import sessionRepository from "../repositories/sessionRepository.js";
+import logger from '../utils/logger.js'
 
 let instance = null;
 
@@ -33,6 +34,8 @@ class UserService{
     }
     createJWT = ({id, nickname}) => {
         const secretKey = config.SECRET_KEY;
+        logger.info(config.SESSION_EXPIRY_TIME)
+        logger.info(typeof config.SESSION_EXPIRY_TIME)
         const payload = {
             userId: id,
             username: nickname,
