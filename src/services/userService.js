@@ -2,7 +2,7 @@ import { Error } from "../error/error.js";
 import jwt from 'jsonwebtoken';
 import { ObjectId } from "bson";
 import { OAuth2Client } from "google-auth-library";
-import config from '../config/config';
+import config from '../config/config.js';
 import User from "../models/user.js";
 import userRepository from "../repositories/userRepository.js";
 import sessionRepository from "../repositories/sessionRepository.js";
