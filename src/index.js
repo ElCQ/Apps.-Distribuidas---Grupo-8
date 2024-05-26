@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import routerAPI from "./routers/router.js";
 import errorHandler from './middlewares/errorHandler.js';
 import logger from './utils/logger.js';
+import config from './config/config.js';
 
 const app = express();
 //middlewares
@@ -19,6 +20,5 @@ app.all('*', (req, res) => {
 //errorHandler
 app.use(errorHandler);
 //server configuration
-let port = 5000;
-app.listen(port, () => logger.info(`Successfully connected to port ${port}`));
+app.listen(config.PORT, () => logger.info(`Successfully connected to port ${config.PORT}`));
 app.on("error", err => logger.error(`${err}`));

@@ -1,7 +1,8 @@
 import { Error } from "../error/error.js";
 import jwt from 'jsonwebtoken';
 import { ObjectId } from "bson";
-import {OAuth2Client} from "google-auth-library";
+import { OAuth2Client } from "google-auth-library";
+import config from '../config/config';
 import User from "../models/user.js";
 import userRepository from "../repositories/userRepository.js";
 import sessionRepository from "../repositories/sessionRepository.js";
@@ -12,12 +13,12 @@ class UserService{
     constructor(){
         this.container = userRepository;
         this.sessionContainer = sessionRepository;
-        this.client = new OAuth2Client('1058795952414-kt6i0psmqpvc2rdbedbpe4ijk81hls1h.apps.googleusercontent.com');
+        this.client = new OAuth2Client(config.GOOGLE_SIGN_IN_CLIENT_ID);
     }
     googleSignInAuth = async (token) => {
         const ticket = await this.client.verifyIdToken({
             idToken: token,
-            audience: '1058795952414-kt6i0psmqpvc2rdbedbpe4ijk81hls1h.apps.googleusercontent.com',
+            audience: config.GOOGLE_SIGN_IN_CLIENT_ID,
           });
       
         return ticket.getPayload();
@@ -26,17 +27,17 @@ class UserService{
         let session = {
             userID: new ObjectId(id),
             jwt: jwt,
-            expirationDate : new Date(Date.now() + 60 * 60 * 1000) //TODO check with config/env variable, 1h for now
+            expirationDate : new Date(Date.now() + config.SESSION_EXPIRY_TIME * 1000)
         }
         return session;
     }
     createJWT = ({id, nickname}) => {
-        const secretKey = "randomteststring"; //TODO check with config/env variable
+        const secretKey = config.SECRET_KEY;
         const payload = {
             userId: id,
             username: nickname,
             iat: Math.floor(Date.now() / 1000), // timestamp
-            exp: Math.floor(Date.now() / 1000) + (60 * 60), //TODO check with config/env variable, 1h for now
+            exp: Math.floor(Date.now() / 1000) + config.SESSION_EXPIRY_TIME,
         };
         return "Bearer " + jwt.sign(payload, secretKey)
     }
