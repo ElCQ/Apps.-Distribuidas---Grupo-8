@@ -34,8 +34,6 @@ class UserService{
     }
     createJWT = ({id, nickname}) => {
         const secretKey = config.SECRET_KEY;
-        logger.info(config.SESSION_EXPIRY_TIME)
-        logger.info(typeof config.SESSION_EXPIRY_TIME)
         const payload = {
             userId: id,
             username: nickname,
@@ -45,6 +43,8 @@ class UserService{
         return "Bearer " + jwt.sign(payload, secretKey)
     }
     authUser = async (token) => {
+        if(token === undefined || token === null)
+            throw new Error(`Google Authentication token is required to perform this action`, 'UNAUTHORIZED')
         let information = await this.googleSignInAuth(token);
         let authInfo = {}
         let newUser = !(await this.checkExistingUser(information.email));
@@ -73,7 +73,9 @@ class UserService{
         authInfo.jwt = jwt;
         return authInfo;
     }
-    refreshAuthUser = async (token) => {        
+    refreshAuthUser = async (token) => {  
+        if(token === undefined || token === null)
+            throw new Error(`Google Authentication token is required to perform this action`, 'UNAUTHORIZED')      
         let information = await this.googleSignInAuth(token);
         let userExists = await this.checkExistingUser(information.email)
         if(!userExists){
