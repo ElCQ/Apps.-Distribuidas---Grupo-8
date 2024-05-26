@@ -1,10 +1,10 @@
 import { Error } from "../error/error.js";
 import jwt from 'jsonwebtoken';
 import { ObjectId } from "bson";
+import {OAuth2Client} from "google-auth-library";
 import User from "../models/user.js";
 import userRepository from "../repositories/userRepository.js";
 import sessionRepository from "../repositories/sessionRepository.js";
-import { google } from "googleapis";
 
 let instance = null;
 
@@ -12,14 +12,15 @@ class UserService{
     constructor(){
         this.container = userRepository;
         this.sessionContainer = sessionRepository;
+        this.client = new OAuth2Client('1058795952414-kt6i0psmqpvc2rdbedbpe4ijk81hls1h.apps.googleusercontent.com');
     }
     googleSignInAuth = async (token) => {
-        const oauth2 = google.oauth2({
-            version: 'v2',
-            auth: token,
+        const ticket = await this.client.verifyIdToken({
+            idToken: token,
+            audience: '1058795952414-kt6i0psmqpvc2rdbedbpe4ijk81hls1h.apps.googleusercontent.com',
           });
-        const userInfo = await oauth2.userinfo.get();
-        return userInfo.data; // Contains user information if valid
+      
+        return ticket.getPayload();
     }
     createSession = (id, jwt) => {
         let session = {
@@ -46,11 +47,11 @@ class UserService{
         let user;
         if(newUser){
             user = new User({
-                name: information.firstname,
-                lastname: information.lastname,
-                nickname: "",
+                firstname: information.given_name,
+                lastname: "",
+                nickname: information.name,
                 email: information.email,
-                image: information.image,
+                image: information.picture,
                 favorites: [],
                 id: new ObjectId()
             })
