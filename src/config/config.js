@@ -1,6 +1,6 @@
 
 export default {
-    PORT: argv.PORT,
+    PORT: process.PORT,
     SECRET_KEY: process.SECRET_KEY,
     GOOGLE_SIGN_IN_CLIENT_ID: process.GOOGLE_SIGN_IN_CLIENT_ID,
     SESSION_EXPIRY_TIME: process.SESSION_EXPIRY_TIME,
