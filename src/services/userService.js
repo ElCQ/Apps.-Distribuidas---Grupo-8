@@ -45,6 +45,7 @@ class UserService{
             throw new Error(`Google Authentication token is required to perform this action`, 'UNAUTHORIZED')
         let information = await this.googleSignInAuth(token);
         let authInfo = {}
+        console.log(information)
         let newUser = !(await this.checkExistingUser(information.email));
         let user;
         if(newUser){
