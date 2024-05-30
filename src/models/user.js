@@ -75,7 +75,7 @@ class User{
     }
     toDTO(){
         const dto = {
-            name: this.#firstname,
+            firstname: this.#firstname,
             lastname: this.#lastname,
             email: this.#email,
             nickname: this.#nickname,
