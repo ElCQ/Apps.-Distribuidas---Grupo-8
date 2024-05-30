@@ -1,4 +1,3 @@
-import imageToBase64 from "image-to-base64"
 class Image{
     #id
     #aspect_ratio
@@ -51,10 +50,6 @@ class Image{
             id: this.#id
         }
         return dto
-    }
-    async toBase64(){
-        const imageUrl = 'https://image.tmdb.org/t/p/original'+this.#file_path
-        return await imageToBase64(imageUrl)
     }
 }
 export default Image;

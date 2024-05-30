@@ -35,7 +35,6 @@ class MovieRepository {
             referenceFieldsList = [{field: "genre", value: genre}]
         }
         let filter = { fields: ["title"], itemFields:[{listName: "cast", field: "name"}, {listName: "crew", field: "name"}], referenceFields: referenceFieldsList,  value: query }
-        
         let moviesDTOs = await this.#dao.getItems(filter, quantity, page, sortCriteria);
         if (!moviesDTOs) return null
         if (moviesDTOs.length === 1 || moviesDTOs.length === undefined) {
