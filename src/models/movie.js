@@ -143,7 +143,6 @@ class Movie{
     }
     async getContent(){
         let content = {};
-        let images = [];
         content["images"] = this.#images;
         content["videos"] = this.#videos;
         return content;
@@ -154,7 +153,7 @@ class Movie{
             subtitle: this.#subtitle,
             synopsis: this.#synopsis,
             genre: this.#genre.toDTO(),
-            default_poster: await this.#default_poster,
+            default_poster: await this.#default_poster.toDTO(),
             images: this.#images.map(image => image.toDTO()),
             videos: this.#videos,
             release_date: this.#release_date,
