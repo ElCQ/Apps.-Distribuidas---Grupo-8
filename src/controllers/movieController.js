@@ -19,7 +19,7 @@ class MovieController{
             }
             let genre = (req.query.genre !== null && req.query.genre !== undefined) ? req.query.genre : "";
             let items = await movieService.getMovies(genre, query, quantity, page, sort);
-            logger.info(`GET REQUEST successful for all movies`);
+            logger.info(`GET REQUEST successful for movies`);
             res.status(200).json(items);
         }
         catch(error){
