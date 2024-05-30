@@ -6,7 +6,6 @@ import config from '../config/config.js';
 import User from "../models/user.js";
 import userRepository from "../repositories/userRepository.js";
 import sessionRepository from "../repositories/sessionRepository.js";
-import logger from '../utils/logger.js'
 
 let instance = null;
 
@@ -21,7 +20,6 @@ class UserService{
             idToken: token,
             audience: config.GOOGLE_SIGN_IN_CLIENT_ID,
           });
-      
         return ticket.getPayload();
     }
     createSession = (id, jwt) => {
@@ -40,7 +38,7 @@ class UserService{
             iat: Math.floor(Date.now() / 1000), // timestamp
             exp: Math.floor(Date.now() / 1000) + config.SESSION_EXPIRY_TIME,
         };
-        return "Bearer " + jwt.sign(payload, secretKey)
+        return jwt.sign(payload, secretKey)
     }
     authUser = async (token) => {
         if(token === undefined || token === null)
