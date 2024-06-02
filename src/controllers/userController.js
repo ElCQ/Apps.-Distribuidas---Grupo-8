@@ -1,4 +1,5 @@
 import userService from '../services/userService.js';
+import imageService from '../services/imageService.js';
 import logger from '../utils/logger.js';
 import userDataValidation from '../validations/userDataValidation.js';
 
@@ -114,7 +115,7 @@ class UserController{
             }
             const cloudResponse = await imageService.uploadToCloud(req.file);
             logger.info(`POST REQUEST successful for image`);
-            res.status(200).json(({ path: cloudResponse.secure_url }));
+            res.status(200).json(cloudResponse.secure_url);
         }
         catch(error){
             next(error)
