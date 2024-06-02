@@ -1,7 +1,6 @@
 import { Error } from "../error/error.js";
 import jwt from 'jsonwebtoken';
 import { ObjectId } from "bson";
-import { OAuth2Client } from "google-auth-library";
 import config from '../config/config.js';
 import User from "../models/user.js";
 import userRepository from "../repositories/userRepository.js";
@@ -13,7 +12,6 @@ class UserService{
     constructor(){
         this.container = userRepository;
         this.sessionContainer = sessionRepository;
-        this.client = new OAuth2Client(config.GOOGLE_SIGN_IN_CLIENT_ID);
     }
     googleSignInAuth = async (token) => {
         const options = {
@@ -22,9 +20,9 @@ class UserService{
               Authorization: `Bearer ${token}`,
             },
           };
-        
         let data = await fetch('https://www.googleapis.com/userinfo/v2/me', options)
         let information = await data.json();
+        console.log(information)
         if(information.error !== undefined){
             throw new Error(`Google Authentication token is expired or invalid`, 'UNAUTHORIZED')
         }
