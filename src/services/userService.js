@@ -16,11 +16,19 @@ class UserService{
         this.client = new OAuth2Client(config.GOOGLE_SIGN_IN_CLIENT_ID);
     }
     googleSignInAuth = async (token) => {
-        const ticket = await this.client.verifyIdToken({
-            idToken: token,
-            audience: config.GOOGLE_SIGN_IN_CLIENT_ID,
-          });
-        return ticket.getPayload();
+        const options = {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          };
+        
+        let data = await fetch('https://www.googleapis.com/userinfo/v2/me', options)
+        let information = await data.json();
+        if(information.error !== null){
+            throw new Error(`Google Authentication token is expired or invalid`, 'UNAUTHORIZED')
+        }
+        return information;
     }
     createSession = (id, jwt) => {
         let session = {
