@@ -107,6 +107,19 @@ class UserController{
             next(error);
         }
     }
+    putImage = async (req, res, next) => {
+        try{
+            if(req instanceof Error){
+                throw new Error('Failed to upload image to multer', 'INTERNAL_ERROR');
+            }
+            const cloudResponse = await imageService.uploadToCloud(req.file);
+            logger.info(`POST REQUEST successful for image`);
+            res.status(200).json(({ path: cloudResponse.secure_url }));
+        }
+        catch(error){
+            next(error)
+        }
+    }
     static getInstance(){
         if(!instance){
             instance = new UserController();

@@ -22,7 +22,7 @@ routerAPI.delete('/auths', checkUserLogged, userController.deleteLogOutUser);
 //users
 routerAPI.get('/users', checkUserLogged, userController.getCurrentUser);
 routerAPI.post('/users', checkUserLogged, userController.postUpdateUser);
-routerAPI.put('/users/images', checkUserLogged, uploadToMulter('file'), userController.controllerPostImage);
+routerAPI.put('/users/images', checkUserLogged, uploadToMulter('file'), userController.putImage);
 routerAPI.delete('/users', checkUserLogged, userController.deleteUser);
 routerAPI.get('/users/favorites', checkUserLogged, userController.getCurrentUserFavorites);
 routerAPI.post('/users/favorites/:id', checkUserLogged, userController.postMovieToCurrentUserFavorites);
