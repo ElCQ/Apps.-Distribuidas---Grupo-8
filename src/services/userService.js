@@ -25,7 +25,7 @@ class UserService{
         
         let data = await fetch('https://www.googleapis.com/userinfo/v2/me', options)
         let information = await data.json();
-        if(information.error !== null){
+        if(information.error !== undefined){
             throw new Error(`Google Authentication token is expired or invalid`, 'UNAUTHORIZED')
         }
         return information;
