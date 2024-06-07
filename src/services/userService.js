@@ -124,7 +124,7 @@ class UserService{
         return (userFound !== null && userFound.length !== 0)
     }
     updateUser = async (userID, user) => {
-        let {nickname, firstname, lastname} = user;
+        let {email, nickname, firstname, lastname} = user;
         let userData = await this.container.getItemByID(userID);
         let userFound = (userData !== null)
         if(!userFound){
@@ -133,7 +133,7 @@ class UserService{
         let newUser = new User({
             firstname: firstname,
             lastname: lastname,
-            email: userData.getEmail(),
+            email: email,
             nickname: nickname,
             image: userData.getImage(),
             favorites: userData.getFavorites(),
