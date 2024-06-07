@@ -1,5 +1,4 @@
 import userService from '../services/userService.js';
-import imageService from '../services/imageService.js';
 import logger from '../utils/logger.js';
 import userDataValidation from '../validations/userDataValidation.js';
 
@@ -58,7 +57,7 @@ class UserController{
             userDataValidation(req.body);
             let userInformationModified = await userService.updateUser(userInformation.id, req.body);
             logger.info(`POST REQUEST successful for updating the user ${userInformation.id}`);
-            res.send(200).status(userInformationModified);
+            res.sendStatus(200).json(userInformationModified);
         }
         catch(error){
             next(error);
@@ -113,7 +112,7 @@ class UserController{
             if(req instanceof Error){
                 throw new Error('Failed to upload image to multer', 'INTERNAL_ERROR');
             }
-            const cloudResponse = await imageService.uploadToCloud(req.file);
+            const cloudResponse = await userService.updateUserImage(req.headers.authorization, req.file);
             logger.info(`POST REQUEST successful for image`);
             res.status(200).json(cloudResponse.secure_url);
         }
