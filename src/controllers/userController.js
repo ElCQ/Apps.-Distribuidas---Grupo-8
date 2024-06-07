@@ -112,9 +112,10 @@ class UserController{
             if(req instanceof Error){
                 throw new Error('Failed to upload image to multer', 'INTERNAL_ERROR');
             }
-            const cloudResponse = await userService.updateUserImage(req.headers.authorization, req.file);
+            let userInformation = await userService.getUserInformation(req.headers.authorization);
+            const newImageURL = await userService.updateUserImage(userInformation.id, req.file);
             logger.info(`POST REQUEST successful for image`);
-            res.status(200).json(cloudResponse.secure_url);
+            res.status(200).json(newImageURL);
         }
         catch(error){
             next(error)
