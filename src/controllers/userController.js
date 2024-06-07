@@ -10,11 +10,11 @@ class UserController{
             let userLogged = await userService.authUser(req.headers.authorization);
             if (userLogged.new){
                 logger.info(`POST REQUEST successful for registering user with email ${userLogged.email}`);
-                res.status(201).json(userLogged.jwt);
+                res.status(201).json({jwt: userLogged.jwt, refreshToken: userLogged.refreshToken});
             }
             else{
                 logger.info(`POST REQUEST successful for logging in user with email ${userLogged.email}`);
-                res.status(200).json(userLogged.jwt);
+                res.status(200).json({jwt: userLogged.jwt, refreshToken: userLogged.refreshToken});
             }
         }
         catch(error){

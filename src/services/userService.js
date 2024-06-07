@@ -37,6 +37,18 @@ class UserService{
         }
         return session;
     }
+    createRefreshToken = ({id, nickname, email, firstname, lastname}) => {
+        const secretKey = config.SECRET_KEY;
+        const payload = {
+            userId: id,
+            username: nickname,
+            email: email,
+            firstname: firstname,
+            lastname: lastname,
+            iat: Math.floor(Date.now() / 1000) // timestamp
+        };
+        return jwt.sign(payload, secretKey)
+    }
     createJWT = ({id, nickname}) => {
         const secretKey = config.SECRET_KEY;
         const payload = {
@@ -55,7 +67,7 @@ class UserService{
         let newUser = !(await this.checkExistingUser(information.email));
         let user;
         if(newUser){
-            user = new User({
+            let userData = {
                 firstname: information.given_name,
                 lastname: "",
                 nickname: information.name,
@@ -63,19 +75,22 @@ class UserService{
                 image: information.picture,
                 favorites: [],
                 id: new ObjectId()
-            })
-            let userID = await this.container.save(user)
+            };
+            userData.refreshToken = this.createRefreshToken(userData);
+            user = new User(userData);
+            let userID = await this.container.save(user);
             user.setID(userID);
         }
         else{
             user = await this.getUser(information.email)
         }
-        let jwt = this.createJWT(user)
+        let jwt = this.createJWT(user.toDTO())
         let session = this.createSession(user.getID(), jwt);
         await this.sessionContainer.save(session);
         authInfo.email = user.getEmail()
         authInfo.new = newUser;
         authInfo.jwt = jwt;
+        authInfo.refreshToken = user.getRefreshToken();
         return authInfo;
     }
     refreshAuthUser = async (token) => {  
