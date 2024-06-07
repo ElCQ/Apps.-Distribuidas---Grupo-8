@@ -112,7 +112,7 @@ class UserService{
         let session = await this.validateJWT(token);
         let user = await this.container.getItemByID(session.userID)
         if(!user){
-            throw new Error(`No user was found with the google token ${token}`, 'NOT_FOUND');
+            throw new Error(`No user was found with the JWT ${token}`, 'NOT_FOUND');
         }
         return user.toDTO();
     }
@@ -140,6 +140,29 @@ class UserService{
             id: userID
         })
         await this.container.modifyByID(userID, newUser)
+    }
+    updateUserImage = async (userID, image) => {
+        let userData = await this.container.getItemByID(userID);
+        let userFound = (userData !== null)
+        if(!userFound){
+            throw new Error(`The specified user could not be found ${userID}`, 'CONFLICT');
+        }
+        let newImageURL = await imageRepository.save(image);
+        let oldImage = userData.getImage();
+        const urlObject = new URL(oldImage);
+        let oldImageID = urlObject.pathname.split('/').slice(-1)[0].split('.')[0];
+        await imageRepository.deleteByID(oldImageID)
+        let newUser = new User({
+            firstname: userData.getFirstname(),
+            lastname: userData.getLastname(),
+            email: userData.getEmail(),
+            nickname: userData.getNickname(),
+            image: newImageURL.secure_url,
+            favorites: userData.getFavorites(),
+            id: userID
+        })
+        await this.container.modifyByID(userID, newUser);
+        return newUser.getImage();
     }
     deleteUser = async (userID) => {
         let userData = await this.container.getItemByID(userID);
