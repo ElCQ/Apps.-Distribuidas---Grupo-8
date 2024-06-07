@@ -3,29 +3,30 @@ import config from '../config/config.js';
 
 let instance = null;
 
-class ImageService{
+class ImageRepository{
     constructor() {
-        
         cloudinary.config({ 
             cloud_name: config.CLOUDINARY_NAME,
             api_key: config.CLOUDINARY_API,
             api_secret: config.CLOUDINARY_SECRET
         });
     }
-    uploadToCloud = async (file) => {
+    save = async (file) => {
         const b64 = Buffer.from(file.buffer).toString("base64");
         let dataURI = "data:" + file.mimetype + ";base64," + b64;
-        const response = await cloudinary.uploader.upload(dataURI,
+        return await cloudinary.uploader.upload(dataURI,
             {
                 resource_type: "auto",
             });
-        return response
+    }
+    deleteByID = async (fileID) => {
+        return await cloudinary.uploader.destroy(fileID);
     }
     static getInstance(){
         if(!instance){
-            instance = new ImageService();
+            instance = new ImageRepository();
         }
         return instance;
     }
 }
-export default ImageService.getInstance();
+export default ImageRepository.getInstance();
