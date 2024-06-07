@@ -93,15 +93,17 @@ class UserService{
         authInfo.refreshToken = user.getRefreshToken();
         return authInfo;
     }
+    checkRefreshToken = async(token) => {
+        return await this.container.getItemByCriteria({refreshToken: token});
+    }
     refreshAuthUser = async (token) => {  
         if(token === undefined || token === null)
-            throw new Error(`Google Authentication token is required to perform this action`, 'UNAUTHORIZED')      
-        let information = await this.googleSignInAuth(token);
-        let userExists = await this.checkExistingUser(information.email)
-        if(!userExists){
+            throw new Error(`Refresh token is required to perform this action`, 'UNAUTHORIZED');
+        let information = await this.checkRefreshToken(token);
+        if(information === null || information.length === 0){
             throw new Error(`The server could not validate the credentials`, 'FORBIDDEN')
         }
-        let user = await this.getUser(information.email);
+        let user = await this.getUser(information.getEmail());
         let newJWT = this.createJWT(user);
         let session = this.createSession(user.getID(), newJWT);
         await this.sessionContainer.save(session);
