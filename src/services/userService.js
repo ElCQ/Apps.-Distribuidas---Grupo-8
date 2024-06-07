@@ -5,6 +5,7 @@ import config from '../config/config.js';
 import User from "../models/user.js";
 import userRepository from "../repositories/userRepository.js";
 import sessionRepository from "../repositories/sessionRepository.js";
+import imageRepository from "../repositories/imageRepository.js";
 
 let instance = null;
 
@@ -12,6 +13,7 @@ class UserService{
     constructor(){
         this.container = userRepository;
         this.sessionContainer = sessionRepository;
+        this.imageContainer = imageRepository;
     }
     googleSignInAuth = async (token) => {
         const options = {
@@ -103,7 +105,7 @@ class UserService{
         }
         let count = await this.sessionContainer.deleteByID(id)
         if(count == 0) {
-            throw new Error("There was an error deleting the session", 'INTERNAL_ERROR')
+            throw new Error(`There was an error deleting the session`, 'INTERNAL_ERROR')
         }
     }
     getUserInformation = async (token) => {
@@ -122,7 +124,7 @@ class UserService{
         return (userFound !== null && userFound.length !== 0)
     }
     updateUser = async (userID, user) => {
-        let {email, nickname, firstname, lastname, image, favorites} = user;
+        let {nickname, firstname, lastname} = user;
         let userData = await this.container.getItemByID(userID);
         let userFound = (userData !== null)
         if(!userFound){
@@ -131,10 +133,10 @@ class UserService{
         let newUser = new User({
             firstname: firstname,
             lastname: lastname,
-            email: email,
+            email: userData.getEmail(),
             nickname: nickname,
-            image: image,
-            favorites: favorites,
+            image: userData.getImage(),
+            favorites: userData.getFavorites(),
             id: userID
         })
         await this.container.modifyByID(userID, newUser)
