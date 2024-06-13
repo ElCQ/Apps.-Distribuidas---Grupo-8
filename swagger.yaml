@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: '1'
   title: MoviePlay
-  description: ''
+  description: 'This API access to movie data as well as to comments, reviews and users. This will allow to visualize and recommend movies between users.<br> <br><strong>Key features:</strong><br>• Log in and authenticate through Google Sign In. <br>• Search movies based on title or by cast member name.<br>• Filter movies based on genres.<br>• Order movies by qualification and/or release date.<br>• Visualize full movie details.<br>• Qualify, review and share movies.<br>• Visualize photos and videos from a movie.<br>• Add movies to your favorites.<br><br><strong>Documentation used:</strong><br>• https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-google-apis-dead94d6866d<br>• https://swagger.io/docs/specification/authentication/oauth2/'
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
@@ -13,8 +13,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    #https://swagger.io/docs/specification/authentication/oauth2/
-    #https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-google-apis-dead94d6866d
     oauth2: 
       type: oauth2        
       description: Google Sign-In   
@@ -37,21 +35,29 @@ components:
         synopsis:
           type: string
         genre:
-          type: string
+            $ref: '#/components/schemas/Genre'
         images:
           type: array
           items:
             type: string
-        release_year:
-          type: integer
+        videos:
+          type: array
+          items:
+            type: string
+        default_poster:
+          type: string
+        release_date:
+          type: string
         duration:
           type: number
         qualification:
           type: number
         qualifiers:
           type: integer
-        director:
-          type: object
+        crew:
+          type: array
+          items:
+            type: object
         cast:
           type: array
           items:
@@ -59,15 +65,15 @@ components:
         comments:
           type: array
           items:
-            type: object
-            properties:
-              id: 
-                type: string
-    MovieWithID:
-      allOf:
-        - $ref: '#/components/schemas/Movie'
-      properties:
+            $ref: '#/components/schemas/Comment'
         id:
+          type: string
+    Genre:
+      type: object
+      properties:
+        id: 
+          type: string
+        name: 
           type: string
     User:
       type: object
@@ -83,16 +89,18 @@ components:
           format: email
         image:
           type: string
-    UserWithID:
-      allOf:
-        - $ref: '#/components/schemas/User'
-      properties:
         id:
           type: string
+        favorites:
+          type: array
+          items: 
+            type: string
     Comment:
       type: object
       properties:
         userId:
+          type: string
+        movieId:
           type: string
         message:
           type: string
@@ -101,10 +109,6 @@ components:
           format: date
         qualification:
           type: string
-    CommentWithID:
-      allOf:
-        - $ref: '#/components/schemas/Comment'
-      properties:
         id:
           type: string
 paths: 
@@ -112,7 +116,7 @@ paths:
     get:
       tags:
         - Movies
-      description: Returns a list of movies
+      summary: Returns a list of movies
       parameters:
         - in: query
           name: query
@@ -123,7 +127,7 @@ paths:
           name: genre
           schema:
             type: string
-          description: The genre of movies to be filtered
+          description: The genre id of movies to be filtered
         - in: query
           name: count
           schema:
@@ -135,12 +139,17 @@ paths:
             type: integer
           description: The numbers of movies to return
         - in: query
-          name: order
+          name: qualification_sort
           schema:
             type: string
             enum:
               - qualification.asc
               - qualification.desc
+        - in: query
+          name: release_sort
+          schema:
+            type: string
+            enum:
               - release.asc
               - release.desc
           description: The order type
@@ -152,7 +161,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovieWithID'
+                  $ref: '#/components/schemas/Movie'
         '400':
           description: Invalid request
           content:
@@ -181,7 +190,7 @@ paths:
     post:
       tags:
         - Movies
-      description: Uploads a movie
+      summary: Uploads a movie
       security:
         - bearerAuth: [] 
       requestBody:
@@ -196,7 +205,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieWithID'
+                $ref: '#/components/schemas/Movie'
         '400':
           description: Invalid request
           content:
@@ -227,7 +236,7 @@ paths:
     get:
       tags:
         - Movies
-      description: Returns a movie by ID
+      summary: Returns a movie by ID
       parameters:
         - in: path
           name: id
@@ -241,7 +250,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieWithID'
+                $ref: '#/components/schemas/Movie'
         '400':
           description: Invalid request
           content:
@@ -268,11 +277,152 @@ paths:
                   message:
                     type: string
                     example: Movie with specified ID not found
+  /movies/{id}/comments:
+    get:
+      tags:
+        - Movies
+      summary: Returns the comments of the movie specified by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: ID of the movie
+      responses:
+        '200':
+          description: Successfully returned the comments of the movie
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid token
+        '404':
+          description: Movie not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: Movie with specified ID not found
+  /movies/{id}/content:
+    get:
+      tags:
+        - Movies
+      summary: Returns the images and videos of the movie specified by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: ID of the movie
+      responses:
+        '200':
+          description: Successfully returned the content of the movie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  images:
+                    type: array
+                    items:
+                      type: string
+                  videos:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid token
+        '404':
+          description: Movie not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: Movie with specified ID not found
+  /genres:
+    get:
+      tags:
+        - Genres
+      summary: Returns a list of genres
+      responses:
+        '200':
+          description: Successfully returned the genres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genre'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid token
+        '404':
+          description: Genre not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: Genre with specified ID not found
   /users:
     get:
       tags:
         - Users
-      description: Return the information of the user
+      summary: Return the information of the user
       security:
         - bearerAuth: [] 
       responses:
@@ -312,7 +462,7 @@ paths:
     put:
       tags:
         - Users
-      description: Updates the user
+      summary: Updates the user
       security:
         - bearerAuth: [] 
       requestBody:
@@ -320,14 +470,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserWithID'
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: Successfully updated the user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserWithID'
+                $ref: '#/components/schemas/User'
         '400':
           description: Invalid request
           content:
@@ -357,7 +507,7 @@ paths:
     delete:
       tags:
         - Users
-      description: Removes the user
+      summary: Removes the user
       security:
         - bearerAuth: []
       responses:
@@ -366,7 +516,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserWithID'
+                $ref: '#/components/schemas/User'
         '401':
           description: Unauthorized action
           content:
@@ -384,7 +534,7 @@ paths:
     get:
       tags:
         - Users
-      description: Return the list of favorites of the user
+      summary: Return the list of favorites of the user
       security:
         - bearerAuth: [] 
       responses:
@@ -395,7 +545,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovieWithID'
+                  $ref: '#/components/schemas/Movie'
         '401':
           description: Unauthorized action
           content:
@@ -413,7 +563,7 @@ paths:
     post:
       tags:
         - Users
-      description: Adds the Movie to the user's favorites list
+      summary: Adds the Movie to the user's favorites list
       security:
         - bearerAuth: [] 
       parameters:
@@ -447,7 +597,7 @@ paths:
     delete:
       tags:
         - Users
-      description: Removes the Movie from the user's favorites list
+      summary: Removes the Movie from the user's favorites list
       security:
         - bearerAuth: [] 
       parameters:
@@ -478,26 +628,78 @@ paths:
                   message:
                     type: string
                     example: Invalid token
+  /users/images:
+    put:
+      tags:
+        - Users
+      summary: Changes the user's image
+      security:
+        - bearerAuth: [] 
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Supported image formats: GIF, PNG, JPG, JPEG"
+      responses:
+        '200':
+          description: Successfully added the Movie from User's favorites list
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Successfully added the Movie from User's favorites list
+        '401':
+          description: Unauthorized action
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: Invalid token
   /auths:
     post:
       tags:
         - Auths
-      description: Logs in or registers the user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-                type: string
-                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
+      summary: Logs in or registers the user with Google Sign-In token
+      security:
+        - oauth2: [] 
       responses:
         '200':
-          description: Successfully returned the new JWT
+          description: Successfully returned the new JWT of the logged in user
           content:
-            application/jwt:
+            application/json:
               schema:
-                type: string
-                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5...
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5...
+        '201':
+          description: Successfully returned the new JWT of the registered user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5...
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5...
         '500':
           description: Internal server error
           content:
@@ -514,23 +716,17 @@ paths:
     put:
       tags:
         - Auths
-      description: Refresh Auth Token
+      summary: Refresh JWT Token
       security:
-        - bearerAuth: [] 
-      requestBody:
-        required: true
-        content:
-            application/jwt:
-              schema:
-                type: string
-                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
+        - oauth2: [] 
       responses:
         '200':
-          description: Successfully returned the new token
+          description: Successfully returned the new token with Google Sign-In token
           content:
             application/jwt:
               schema:
                 type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5...
         '401':
           description: Unauthorized action
           content:
@@ -547,7 +743,7 @@ paths:
     delete:
       tags:
         - Auths
-      description: Logs out the user
+      summary: Logs out the user
       security:
         - bearerAuth: [] 
       responses:
@@ -581,7 +777,7 @@ paths:
     post:
       tags:
         - Comments
-      description: Uploads a comment
+      summary: Uploads a comment
       security:
         - bearerAuth: [] 
       requestBody:
@@ -596,7 +792,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CommentWithID'
+                $ref: '#/components/schemas/Comment'
         '400':
           description: Invalid request
           content:
@@ -610,138 +806,6 @@ paths:
                   message:
                     type: string
                     example: Invalid information provided
-        '401':
-          description: Unauthorized action
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:   
-                  statusCode:
-                    type: integer
-                    example: 401
-                  message:
-                    type: string
-                    example: Invalid token
-  /comments/{id}:
-    get:
-      tags:
-        - Comments
-      description: Returns a comment by ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            description: ID of the comment
-      responses:
-        '200':
-          description: Successfully returned a list of movies
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CommentWithID'
-        '400':
-          description: Invalid request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:   
-                  statusCode:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Invalid ID
-        '404':
-          description: Comment not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:   
-                  statusCode:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Comment not found
-    put:
-      tags:
-        - Comments
-      description: Uploads a comment
-      security:
-        - bearerAuth: [] 
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            description: ID of the comment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Comment'
-      responses:
-        '200':
-          description: Successfully posted the comment
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommentWithID'
-        '400':
-          description: Invalid request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:   
-                  statusCode:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Invalid information provided
-        '401':
-          description: Unauthorized action
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:   
-                  statusCode:
-                    type: integer
-                    example: 401
-                  message:
-                    type: string
-                    example: Invalid token
-    delete:
-      tags:
-        - Comments
-      description: Removes the comment
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            description: ID of the comment
-      responses:
-        '200':
-          description: Successfully deleted comment
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CommentWithID'
         '401':
           description: Unauthorized action
           content:
