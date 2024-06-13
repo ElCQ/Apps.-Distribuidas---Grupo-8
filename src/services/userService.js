@@ -153,6 +153,7 @@ class UserService{
             email: email,
             nickname: nickname,
             image: userData.getImage(),
+            refreshToken: userData.getRefreshToken(),
             favorites: userData.getFavorites(),
             id: userID
         })
@@ -176,6 +177,7 @@ class UserService{
             nickname: userData.getNickname(),
             image: newImageURL.secure_url,
             favorites: userData.getFavorites(),
+            refreshToken: userData.getRefreshToken(),
             id: userID
         })
         await this.container.modifyByID(userID, newUser);
