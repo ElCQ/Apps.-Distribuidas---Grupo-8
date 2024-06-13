@@ -6,7 +6,8 @@ class User{
     #email
     #image
     #favorites
-    constructor({email, nickname, firstname, lastname, image, favorites, id}){
+    #refreshToken
+    constructor({email, nickname, firstname, lastname, image, favorites, id, refreshToken}){
         this.#email = email;
         this.#nickname = nickname;
         this.#firstname = firstname;
@@ -14,6 +15,7 @@ class User{
         this.#id = id;
         this.#image = image;
         this.#favorites = favorites;
+        this.#refreshToken = refreshToken
     }
     getID(){
         return this.#id;
@@ -65,22 +67,30 @@ class User{
     removeFavorite(favorite){
         this.#favorites = this.#favorites.filter(item => item !== favorite);
     }
-    modify({email, nickname, firstname, lastname, image, favorites}){
+    getRefreshToken(){
+        return this.#refreshToken;
+    }
+    setRefreshToken(refreshToken){
+        this.#refreshToken = refreshToken;
+    }
+    modify({email, nickname, firstname, lastname, image, favorites, refreshToken}){
         this.setEmail(email);
         this.setNickname(nickname);
         this.setFirstname(firstname);
         this.setLastname(lastname);
         this.setImage(image);
         this.setFavorites(favorites);
+        this.setRefreshToken(refreshToken);
     }
     toDTO(){
         const dto = {
-            name: this.#firstname,
+            firstname: this.#firstname,
             lastname: this.#lastname,
             email: this.#email,
             nickname: this.#nickname,
             image: this.#image,
             favorites: this.#favorites,
+            refreshToken: this.#refreshToken,
             id: this.#id
         }
         return dto

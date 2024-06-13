@@ -42,15 +42,20 @@ export default class MongoDBContainer {
         let genreCriteria = {$or: listOfGenreCriterias};
         let queryCriteria = {$or: listOfQueryCriterias};
         let filter;
-        if(listOfGenreCriterias.length === 0){
-            filter = queryCriteria
+        if(listOfGenreCriterias.length === 0 && listOfQueryCriterias.length === 0){
+            filter = {}
         }
         else{
-            if(listOfQueryCriterias.length === 0){
-                filter = genreCriteria
+            if(listOfGenreCriterias.length === 0){
+                filter = queryCriteria
             }
             else{
-                filter = {$and: [genreCriteria, queryCriteria]}
+                if(listOfQueryCriterias.length === 0){
+                    filter = genreCriteria
+                }
+                else{
+                    filter = {$and: [genreCriteria, queryCriteria]}
+                }
             }
         }
         let items = await this.items.find(filter).sort(sortCriteria).skip((page - 1) * quantity).limit(quantity).toArray();

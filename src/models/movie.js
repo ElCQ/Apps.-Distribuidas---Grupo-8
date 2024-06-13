@@ -143,13 +143,7 @@ class Movie{
     }
     async getContent(){
         let content = {};
-        let images = [];
-        for (let index = 0; index < this.#images.length; index++) {
-            const image = this.#images[index];
-            let base64String = await image.toBase64()
-            images.push(base64String)
-        }
-        content["images"] = images;
+        content["images"] = this.#images;
         content["videos"] = this.#videos;
         return content;
     }
@@ -159,7 +153,7 @@ class Movie{
             subtitle: this.#subtitle,
             synopsis: this.#synopsis,
             genre: this.#genre.toDTO(),
-            default_poster: await this.#default_poster.toBase64(),
+            default_poster: await this.#default_poster.toDTO(),
             images: this.#images.map(image => image.toDTO()),
             videos: this.#videos,
             release_date: this.#release_date,

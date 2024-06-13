@@ -628,6 +628,44 @@ paths:
                   message:
                     type: string
                     example: Invalid token
+  /users/images:
+    put:
+      tags:
+        - Users
+      summary: Changes the user's image
+      security:
+        - bearerAuth: [] 
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Supported image formats: GIF, PNG, JPG, JPEG"
+      responses:
+        '200':
+          description: Successfully added the Movie from User's favorites list
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Successfully added the Movie from User's favorites list
+        '401':
+          description: Unauthorized action
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: Invalid token
   /auths:
     post:
       tags:
@@ -639,17 +677,29 @@ paths:
         '200':
           description: Successfully returned the new JWT of the logged in user
           content:
-            application/jwt:
+            application/json:
               schema:
-                type: string
-                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5...
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5...
         '201':
           description: Successfully returned the new JWT of the registered user
           content:
-            application/jwt:
+            application/json:
               schema:
-                type: string
-                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5...
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5...
         '500':
           description: Internal server error
           content:
@@ -676,7 +726,7 @@ paths:
             application/jwt:
               schema:
                 type: string
-                example: Bearer eyJhbGciOiJIUzI1NiIsInR5...");
+                example: eyJhbGciOiJIUzI1NiIsInR5...
         '401':
           description: Unauthorized action
           content:

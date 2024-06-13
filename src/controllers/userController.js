@@ -10,11 +10,11 @@ class UserController{
             let userLogged = await userService.authUser(req.headers.authorization);
             if (userLogged.new){
                 logger.info(`POST REQUEST successful for registering user with email ${userLogged.email}`);
-                res.status(201).json(userLogged.jwt);
+                res.status(201).json({jwt: userLogged.jwt, refreshToken: userLogged.refreshToken});
             }
             else{
                 logger.info(`POST REQUEST successful for logging in user with email ${userLogged.email}`);
-                res.status(200).json(userLogged.jwt);
+                res.status(200).json({jwt: userLogged.jwt, refreshToken: userLogged.refreshToken});
             }
         }
         catch(error){
@@ -57,7 +57,7 @@ class UserController{
             userDataValidation(req.body);
             let userInformationModified = await userService.updateUser(userInformation.id, req.body);
             logger.info(`POST REQUEST successful for updating the user ${userInformation.id}`);
-            res.send(200).status(userInformationModified);
+            res.sendStatus(200).json(userInformationModified);
         }
         catch(error){
             next(error);
@@ -105,6 +105,20 @@ class UserController{
         }
         catch(error){
             next(error);
+        }
+    }
+    putImage = async (req, res, next) => {
+        try{
+            if(req instanceof Error){
+                throw new Error('Failed to upload image to multer', 'INTERNAL_ERROR');
+            }
+            let userInformation = await userService.getUserInformation(req.headers.authorization);
+            const newImageURL = await userService.updateUserImage(userInformation.id, req.file);
+            logger.info(`POST REQUEST successful for image`);
+            res.status(200).json(newImageURL);
+        }
+        catch(error){
+            next(error)
         }
     }
     static getInstance(){
