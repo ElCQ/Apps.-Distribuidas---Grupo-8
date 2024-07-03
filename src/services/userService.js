@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { ObjectId } from "bson";
 import config from '../config/config.js';
 import User from "../models/user.js";
+import movieService from "./movieService.js";
 import userRepository from "../repositories/userRepository.js";
 import sessionRepository from "../repositories/sessionRepository.js";
 import imageRepository from "../repositories/imageRepository.js";
