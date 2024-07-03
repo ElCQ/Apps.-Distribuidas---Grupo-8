@@ -579,8 +579,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                example: Successfully added the Movie from User's favorites list
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
         '401':
           description: Unauthorized action
           content:
@@ -613,8 +614,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                example: Successfully removed the Movie from User's favorites list
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
         '401':
           description: Unauthorized action
           content:
