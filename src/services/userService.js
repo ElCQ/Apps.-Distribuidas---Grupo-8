@@ -192,7 +192,7 @@ class UserService{
         await this.container.deleteByID(userID)
     }
     getUserFavoriteMovies = async (userID) => {
-        let userData = await this.container.getItemByID(userID, movieID);
+        let userData = await this.container.getItemByID(userID);
         let userFound = (userData !== null)
         if(!userFound){
             throw new Error(`The specified user could not be found ${userID}`, 'CONFLICT');
@@ -205,8 +205,8 @@ class UserService{
         }
         return favoritesParsed;
     }
-    addMovieToUserFavorites = async (userID) => {
-        let userData = await this.container.getItemByID(userID, movieID);
+    addMovieToUserFavorites = async (userID, movieID) => {
+        let userData = await this.container.getItemByID(userID);
         let userFound = (userData !== null)
         if(!userFound){
             throw new Error(`The specified user could not be found ${userID}`, 'CONFLICT');
@@ -215,7 +215,7 @@ class UserService{
         await this.container.modifyByID(userID, userData);
         return await this.getUserFavoriteMovies(userID);
     }
-    removeMovieFromUserFavorites = async (userID) => {
+    removeMovieFromUserFavorites = async (userID, movieID) => {
         let userData = await this.container.getItemByID(userID, movieID);
         let userFound = (userData !== null)
         if(!userFound){
