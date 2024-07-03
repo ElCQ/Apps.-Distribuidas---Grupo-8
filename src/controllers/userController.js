@@ -89,7 +89,7 @@ class UserController{
         try{
             let userInformation = await userService.getUserInformation(req.headers.authorization);
             let favoriteMovies = await userService.addMovieToUserFavorites(userInformation.id, req.params.id);
-            logger.info(`GET REQUEST successful for user ${userInformation.id} favorite movies`);
+            logger.info(`POST REQUEST successful for user ${userInformation.id} favorite movie ${req.params.id}`);
             res.status(200).json(favoriteMovies);
         }
         catch(error){
@@ -100,7 +100,7 @@ class UserController{
         try{
             let userInformation = await userService.getUserInformation(req.headers.authorization);
             let favoriteMovies = await userService.removeMovieFromUserFavorites(userInformation.id, req.params.id);
-            logger.info(`GET REQUEST successful for user ${userInformation.id} favorite movies`);
+            logger.info(`DELETE REQUEST successful for user ${userInformation.id} favorite movie ${req.params.id}`);
             res.status(200).json(favoriteMovies);
         }
         catch(error){
