@@ -201,7 +201,7 @@ class UserService{
         let favoritesParsed = []
         let favorites = userData.getFavorites();
         for (let index = 0; index < favorites.length; index++) {
-            const movie = movieService.getMovie(favorites[index]);
+            const movie = await movieService.getMovie(favorites[index]);
             favoritesParsed.push(movie);
         }
         return favoritesParsed;
