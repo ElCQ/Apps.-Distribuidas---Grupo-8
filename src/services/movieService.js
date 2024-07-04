@@ -89,7 +89,7 @@ class MovieService{
         if(!(await this.checkExistingMovie(idMovie))){
             throw new Error(`No movie was found matching ID ${idMovie}`, 'BAD_REQUEST');
         }
-        let movie = await getMovieByID(idMovie);
+        let movie = await this.getMovieByID(idMovie);
         movie.addComment(newComment);
         movie.addQualification(newComment.qualification)
         let movieID = await this.container.modifyByID(idMovie, movie.toDTO())
