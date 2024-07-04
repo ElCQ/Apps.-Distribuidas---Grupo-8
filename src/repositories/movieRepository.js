@@ -52,7 +52,7 @@ class MovieRepository {
             title: newMovie.title,
             subtitle: newMovie.subtitle,
             synopsis: newMovie.synopsis,
-            genre: ObjectId(newMovie.genre.id),
+            genre: new ObjectId(newMovie.genre.id),
             default_poster: newMovie.default_poster,
             images: newMovie.images,
             videos: newMovie.videos,

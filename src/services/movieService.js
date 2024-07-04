@@ -92,7 +92,7 @@ class MovieService{
         let movie = await this.getMovieByID(idMovie);
         movie.addComment(newComment);
         movie.addQualification(newComment.qualification)
-        let movieID = await this.container.modifyByID(idMovie, movie.toDTO())
+        let movieID = await this.container.modifyByID(idMovie, await movie.toDTO())
         if(!movieID){
             throw new Error(`There was an error adding the comment to the movie`, 'INTERNAL_ERROR') 
         }
