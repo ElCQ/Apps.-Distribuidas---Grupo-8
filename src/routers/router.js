@@ -21,6 +21,7 @@ routerAPI.put('/auths', userController.putRefreshAuth);
 routerAPI.delete('/auths', checkUserLogged, userController.deleteLogOutUser);
 //users
 routerAPI.get('/users', checkUserLogged, userController.getCurrentUser);
+routerAPI.get('/users/:id', checkUserLogged, userController.getUserByID);
 routerAPI.post('/users', checkUserLogged, userController.postUpdateUser);
 routerAPI.put('/users/images', checkUserLogged, uploadToMulter('file'), userController.putImage);
 routerAPI.delete('/users', checkUserLogged, userController.deleteUser);
