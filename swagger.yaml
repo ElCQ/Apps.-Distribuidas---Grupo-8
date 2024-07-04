@@ -95,6 +95,8 @@ components:
           type: array
           items: 
             type: string
+        refreshToken:
+          type: string
     Comment:
       type: object
       properties:
@@ -530,6 +532,60 @@ paths:
                   message:
                     type: string
                     example: Invalid token
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Return the public information of the specified user
+      security:
+        - bearerAuth: [] 
+      responses:
+        '200':
+          description: Successfully returned the attributes of the specified user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  firstname:
+                    type: string
+                  lastname:
+                    type: string
+                  nickname:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  image:
+                    type: string
+        '401':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: Invalid token
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: User with specified ID not found
   /users/favorites:
     get:
       tags:
