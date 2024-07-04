@@ -134,6 +134,16 @@ class UserService{
         }
         return user.toDTO();
     }
+    getUserByID = async (userID) => {
+        let user = await this.container.getItemByID(userID)
+        if(!user){
+            throw new Error(`No user was found with the ID ${userID}`, 'NOT_FOUND');
+        }
+        let userDTO = user.toDTO()
+        delete userDTO.favorites;//deletes private information
+        delete userDTO.refreshToken;//deletes private information
+        return userDTO;
+    }
     getUser = async (email) => {
         return await this.container.getItemByCriteria({email: email})
     }
