@@ -151,6 +151,7 @@ class Movie{
         return content;
     }
     async toDTO(){
+        console.log(this.#comments)
         const dto = {
             title: this.#title,
             subtitle: this.#subtitle,
@@ -168,6 +169,7 @@ class Movie{
             comments: this.#comments.map(comment => comment.toDTO()),
             id: this.#id
         }
+        console.log("b")
         return dto
     }
 }

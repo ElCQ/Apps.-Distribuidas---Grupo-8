@@ -1,5 +1,6 @@
 import Movie from '../models/movie.js';
-import Image from '../models/image.js'
+import Image from '../models/image.js';
+import Comment from '../models/comment.js';
 import { ObjectId } from 'mongodb';
 import MongoDBContainer from "../containers/mongoDBContainer.js";
 
@@ -15,6 +16,7 @@ class MovieRepository {
         moviesDTOs.forEach((movie)=>{
             movie.images = movie.images.map(image => {return new Image(image)})
             movie.default_poster = new Image(movie.default_poster)
+            movie.comments = movie.comments.map(comment => {return new Comment(comment)})
             parsedMovies.push(new Movie(movie));
         })
         return parsedMovies;
@@ -27,6 +29,7 @@ class MovieRepository {
         if (!dto) return null
         dto.images = dto.images.map(image => {return new Image(image)})
         dto.default_poster = new Image(dto.default_poster)
+        dto.comments = dto.comments.map(comment => {return new Comment(comment)})
         return new Movie(dto)
     }
     async getMovies(genre, query, quantity, page, sortCriteria){
@@ -41,6 +44,7 @@ class MovieRepository {
             let movie = moviesDTOs[0]
             movie.images = movie.images.map(image => {return new Image(image)})
             movie.default_poster = new Image(movie.default_poster)
+            movie.comments = movie.comments.map(comment => {return new Comment(comment)})
             return new Movie(movie);
         }
         else{
