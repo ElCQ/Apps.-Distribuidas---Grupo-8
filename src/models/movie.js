@@ -119,6 +119,9 @@ class Movie{
     setComments(comments){
         this.#comments = comments
     }
+    addComment(comment){
+        this.#comments.push(comment);
+    }
     getID(){
         return this.#id
     }
