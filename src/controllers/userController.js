@@ -51,6 +51,16 @@ class UserController{
             next(error);
         }
     }
+    getUserByID = async (req, res, next) => {
+        try{
+            let userInformation = await userService.getUserByID(req.params.id);
+            logger.info(`GET REQUEST successful for getting the information of user ID ${req.params.id}`);
+            res.status(200).json(userInformation);
+        }
+        catch(error){
+            next(error);
+        }
+    }
     postUpdateUser = async (req, res, next) => {
         try{
             let userInformation = await userService.getUserInformation(req.headers.authorization);
