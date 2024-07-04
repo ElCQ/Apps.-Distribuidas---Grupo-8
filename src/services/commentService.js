@@ -21,6 +21,7 @@ class CommentService{
         if(!commentID){
             throw new Error(`There was an error creating the comment`, 'INTERNAL_ERROR') 
         }
+        newComment.setID(commentID)
         await movieService.addQualification(newComment)
         return commentID;
     }
